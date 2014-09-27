@@ -161,6 +161,53 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
                {set: {key: 'token', value: token}},
                {set: {key: 'delta', value: {row: row, col: col, id: id, rot: rot}}}];
     }
+    /** Returns an array of {stateBeforeMove, move, comment}. */
+    function getExampleMoves(initialTurnIndex, initialState, arrayOfRowColComment) {
+        var exampleMoves = [];
+        var state = initialState;
+        var turnIndex = initialTurnIndex;
+        for (var i = 0; i < arrayOfRowColComment.length; i++) {
+            var rowColComment = arrayOfRowColComment[i];
+            var move = createMove(state.board, state.token, rowColComment.row, rowColComment.col, rowColComment.id, rowColComment.rot, turnIndex);
+            var stateAfterMove = {board : move[1].set.value, token: move[2].set.value, delta: move[3].set.value};
+            exampleMoves.push({
+                stateBeforeMove: state,
+                stateAfterMove: stateAfterMove,
+                turnIndexBeforeMove: turnIndex,
+                turnIndexAfterMove: 1 - turnIndex,
+                move: move,
+                comment: {en: rowColComment.comment}});
+
+            state = stateAfterMove;
+            turnIndex = 1 - turnIndex;
+        }
+        //console.log(JSON.stringify(exampleMoves));
+        return exampleMoves;
+    }
+
+    function getExampleGame() {
+        return getExampleMoves(0, {board: [[[-1, -1],[-1, -1],[-1, -1]], 
+                                           [[-1, -1],[-1, -1],[-1, -1]], 
+                                           [[-1, -1],[-1, -1],[-1, -1]]],
+                                   token: [[-1,-1,-1], [-1,-1, -1]],
+                                   delta: {row: 0, col: 0, id: 0, rot: 0}},
+                [
+                {row: 2, col: 1, id: 0, rot: 5, comment: "player0 put token0 at the board edge"},
+                {row: 0, col: 0, id: 0, rot: 0, comment: "player1 put token1 at the board edge"},
+
+                {row: 2, col: 1, id: 1, rot: 5, comment: "player0 put tile1 at 2x1 with rotation 5"},
+                {row: 0, col: 0, id: 4, rot: 0, comment: "player1 put tile4 at 0x0 with rotation 0"},
+
+                {row: 2, col: 2, id: 0, rot: 0, comment: "player0 put tile0 at 2x2 with rotation 0"},
+                {row: 0, col: 1, id: 1, rot: 5, comment: "player1 put tile1 at 0x1 with rotation 5"},
+
+                {row: 1, col: 2, id: 2, rot: 1, comment: "player0 put tile2 at 1x2 with rotation 1"},
+                {row: 1, col: 1, id: 0, rot: 1, comment: "player1 put tile0 at 1x1 with rotation 1"},
+
+                {row: 0, col: 2, id: 3, rot: 2, comment: "to win the game, player0 put a tile to move token1 reach the board edge"},
+                ]);
+    }
+
 
 
     function isMoveOk(params){
@@ -235,5 +282,6 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
         }
         return true;
     }
-      this.isMoveOk = isMoveOk;
+    this.isMoveOk = isMoveOk;
+    this.getExampleGame = getExampleGame;
 });

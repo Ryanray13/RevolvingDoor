@@ -241,4 +241,15 @@ describe("In RevolvingLogic ", function() {
       );
   });
 
+  it("example game", function(){
+         eg = RevolvingLogic.getExampleGame(); 
+         for(var i in eg){
+             var board = eg[i].stateAfterMove.board;
+             var token = eg[i].stateAfterMove.token;
+             //console.log(JSON.stringify(board));
+             //console.log(JSON.stringify(token));
+             //console.log("--");
+         }
+  });
+
 });
