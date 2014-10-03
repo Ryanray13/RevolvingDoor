@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TicTacToe</title>
-  <meta name="description" content="TicTacToe game">
+  <title>RevolvingDoor</title>
+  <meta name="description" content="RevolvingDoor game">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="components/angular/angular.js"></script>
   <script src="game.js"></script>
@@ -21,6 +21,17 @@
     </tr>
   </table>
   <textarea rows=10 cols=100 readonly>
+    Example steps:
+
+    [{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token', value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]
+
+    [{setTurn: {turnIndex : 0}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token', value: [[2,1,5], [0,0, 0]]}}, {set: {key: 'delta', value: {row: 0, col: 0, id: 0, rot: 0}}}]
+
+    [{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[1, 5],[-1, -1]]]}}, {set: {key: 'token', value: [[2,2,0], [0,0, 0]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 1, rot: 5}}}]
+
+    [{setTurn: {turnIndex : 0}}, {set: {key: 'board', value: [[[4, 0],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[1, 5],[-1, -1]]]}}, {set: {key: 'token', value: [[2,2,0], [0,1, 0]]}}, {set: {key: 'delta', value: {row: 0, col: 0, id: 4, rot: 0}}}]
+
+
     All operations in GameApi:
     [
       {setTurn: {turnIndex: 1}},
