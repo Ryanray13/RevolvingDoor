@@ -89,11 +89,9 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
         return JSON.stringify(object1) === JSON.stringify(object2);
     }
 
-    /*
     function copyObject(object) {
         return JSON.parse(JSON.stringify(object));
     }
-    */
 
     // check if token's location is at the edge of board
     function isEdge(row, col, edg){
@@ -164,7 +162,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     /** Returns an array of {stateBeforeMove, move, comment}. */
     function getExampleMoves(initialTurnIndex, initialState, arrayOfRowColComment) {
         var exampleMoves = [];
-        var state = initialState;
+        var state = copyObject(initialState);
         var turnIndex = initialTurnIndex;
         for (var i = 0; i < arrayOfRowColComment.length; i++) {
             var rowColComment = arrayOfRowColComment[i];
@@ -178,10 +176,10 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
                 move: move,
                 comment: {en: rowColComment.comment}});
 
-            state = stateAfterMove;
+            state = copyObject(stateAfterMove);
             turnIndex = 1 - turnIndex;
+            //console.log(JSON.stringify(state));
         }
-        //console.log(JSON.stringify(exampleMoves));
         return exampleMoves;
     }
 
@@ -284,4 +282,5 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     }
     this.isMoveOk = isMoveOk;
     this.getExampleGame = getExampleGame;
+    this.createMove = createMove;
 });
