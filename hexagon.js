@@ -1,5 +1,3 @@
-// Hex math defined here: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
-//
 // The MIT License
 //
 // Copyright (c) 2012-2013 Robert Anton Reese
@@ -21,6 +19,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+// Hex math defined here: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
 
 function HexagonGrid(canvasId, radius) {
     this.radius = radius;
@@ -77,14 +77,22 @@ HexagonGrid.prototype.drawHexAtColRow = function(column, row, color) {
 };
 
 HexagonGrid.prototype.drawHex = function(x0, y0, fillColor, debugText) {
+
+    /* 
+     
+   0 1  2
+      __
+   0 /  \ 3
+     \__/
+     5  4a */
     this.context.strokeStyle = "#000";
     this.context.beginPath();
-    this.context.moveTo(x0 + this.width - this.side, y0);
-    this.context.lineTo(x0 + this.side, y0);
-    this.context.lineTo(x0 + this.width, y0 + (this.height / 2));
-    this.context.lineTo(x0 + this.side, y0 + this.height);
-    this.context.lineTo(x0 + this.width - this.side, y0 + this.height);
-    this.context.lineTo(x0, y0 + (this.height / 2));
+    this.context.moveTo(x0, y0 + (this.height / 2)); //0
+    this.context.lineTo(x0 + this.width - this.side, y0); //1
+    this.context.lineTo(x0 + this.side, y0); //2
+    this.context.lineTo(x0 + this.width, y0 + (this.height / 2)); //3
+    this.context.lineTo(x0 + this.side, y0 + this.height); //4
+    this.context.lineTo(x0 + this.width - this.side, y0 + this.height); //5
 
     if (fillColor) {
         this.context.fillStyle = fillColor;
@@ -98,6 +106,66 @@ HexagonGrid.prototype.drawHex = function(x0, y0, fillColor, debugText) {
         this.context.font = "8px";
         this.context.fillStyle = "#000";
         this.context.fillText(debugText, x0 + (this.width / 2) - (this.width/4), y0 + (this.height - 5));
+    }
+};
+
+HexagonGrid.prototype.drawPath = function(x0, y0, s0, s1) {
+    var sideNum = 6;
+    var side = [];
+    var vertex = [];
+
+    vertex[0] = [x0, y0 + (this.height / 2)];                    //0
+    vertex[1] = [x0 + this.width - this.side, y0];               //1
+    vertex[2] = [x0 + this.side, y0];                            //2
+    vertex[3] = [x0 + this.width, y0 + (this.height / 2)];       //3
+    vertex[4] = [x0 + this.side, y0 + this.height];              //4
+    vertex[5] = [x0 + this.width - this.side, y0 + this.height]; //5
+
+    for(var i = 0; i < sideNum; i++){
+        side[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
+    }
+
+    var diff = Math.abs(s1 - s0);
+    if(diff == 1 || diff == 5){
+        // Draw an arc with half radius
+        var vs;
+        var ve;
+        if((s0 + 1)%sideNum == s1){
+            vs = s1;
+            ve = s0;
+        }
+        else{
+            vs = s0;
+            ve = s1;
+        }
+        this.context.beginPath();
+        this.context.arc(vertex[vs][0],vertex[vs][1],this.radius/2, 1/3*Math.PI*ve, 2/3*Math.PI + 1/3*Math.PI*ve);
+        this.context.stroke();
+    }
+    else if(diff == 2 || diff == 4){
+        // Draw an arc with 2/3 radius
+        var vs;
+        var ve;
+        if((s0 + 2)%sideNum == s1){
+            vs = s0;
+            ve = (vs+1)%sideNum;
+        }
+        else{
+            vs = s1;
+            ve = (vs+1)%sideNum;
+        }
+        console.log(vs + " " + ve);
+        var cx = vertex[ve][0] + vertex[ve][0] - vertex[vs][0];
+        var cy = vertex[ve][1] + vertex[ve][1] - vertex[vs][1];
+        this.context.beginPath();
+        this.context.arc(cx,cy,this.radius*3/2, 1/3*Math.PI*ve, 1/3*Math.PI*ve + 1/3*Math.PI);
+        this.context.stroke();
+    }
+    else if(diff == 3){
+        //Draw a line
+        this.context.moveTo(side[s0][0], side[s0][1]); 
+        this.context.lineTo(side[s1][0], side[s1][1]); 
+        this.context.stroke();
     }
 };
 
