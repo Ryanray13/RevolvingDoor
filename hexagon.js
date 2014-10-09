@@ -62,7 +62,9 @@ HexagonGrid.prototype.drawHexGrid = function (rows, cols, originX, originY, isDe
             }
 
             if (isDebug) {
-                debugText = col + "," + row;
+                //var tr = this.offsetToAxial(col, row);
+                //debugText = tr[0]+ "," + tr[1];
+                debugText = col+ "," + row;
             }
 
             this.drawHex(currentHexX, currentHexY, "#ddd", debugText);
@@ -305,4 +307,16 @@ HexagonGrid.prototype.clickEvent = function (e) {
 
         this.drawHex(drawx, drawy - 6, "rgba(110,110,70,0.3)", "");
     } 
+};
+
+HexagonGrid.prototype.axialToOffset = function (ax, ay) {
+    var ox = ax;
+    var oy = ay + (ax - (ax&1))/2;
+    return [ox, oy];
+};
+
+HexagonGrid.prototype.offsetToAxial = function (ox, oy) {
+    var ax = ox;
+    var ay = oy - (ox - (ox&1))/2;
+    return [ax, ay];
 };
