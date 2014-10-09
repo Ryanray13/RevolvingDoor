@@ -34,6 +34,8 @@ function HexagonGrid(canvasId, radius) {
 
     this.canvasOriginX = 0;
     this.canvasOriginY = 0;
+
+    this.sideNum = 6;
     
     this.canvas.addEventListener("mousedown", this.clickEvent.bind(this), false);
 };
@@ -64,6 +66,7 @@ HexagonGrid.prototype.drawHexGrid = function (rows, cols, originX, originY, isDe
             }
 
             this.drawHex(currentHexX, currentHexY, "#ddd", debugText);
+            //this.drawPathTile(currentHexX, currentHexY, 1, 4);
         }
         offsetColumn = !offsetColumn;
     }
@@ -84,7 +87,7 @@ HexagonGrid.prototype.drawHex = function(x0, y0, fillColor, debugText) {
       __
    0 /  \ 3
      \__/
-     5  4a */
+     5  4  */
     this.context.strokeStyle = "#000";
     this.context.beginPath();
     this.context.moveTo(x0, y0 + (this.height / 2)); //0
@@ -110,7 +113,6 @@ HexagonGrid.prototype.drawHex = function(x0, y0, fillColor, debugText) {
 };
 
 HexagonGrid.prototype.drawPath = function(x0, y0, s0, s1) {
-    var sideNum = 6;
     var side = [];
     var vertex = [];
 
@@ -121,8 +123,8 @@ HexagonGrid.prototype.drawPath = function(x0, y0, s0, s1) {
     vertex[4] = [x0 + this.side, y0 + this.height];              //4
     vertex[5] = [x0 + this.width - this.side, y0 + this.height]; //5
 
-    for(var i = 0; i < sideNum; i++){
-        side[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
+    for(var i = 0; i < this.sideNum; i++){
+        side[i] = [(vertex[i][0] + vertex[(i+1)%this.sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%this.sideNum][1])/2];
     }
 
     var diff = Math.abs(s1 - s0);
@@ -130,7 +132,7 @@ HexagonGrid.prototype.drawPath = function(x0, y0, s0, s1) {
         // Draw an arc with half radius
         var vs;
         var ve;
-        if((s0 + 1)%sideNum == s1){
+        if((s0 + 1)%this.sideNum == s1){
             vs = s1;
             ve = s0;
         }
@@ -146,15 +148,14 @@ HexagonGrid.prototype.drawPath = function(x0, y0, s0, s1) {
         // Draw an arc with 2/3 radius
         var vs;
         var ve;
-        if((s0 + 2)%sideNum == s1){
+        if((s0 + 2)%this.sideNum == s1){
             vs = s0;
-            ve = (vs+1)%sideNum;
+            ve = (vs+1)%this.sideNum;
         }
         else{
             vs = s1;
-            ve = (vs+1)%sideNum;
+            ve = (vs+1)%this.sideNum;
         }
-        console.log(vs + " " + ve);
         var cx = vertex[ve][0] + vertex[ve][0] - vertex[vs][0];
         var cy = vertex[ve][1] + vertex[ve][1] - vertex[vs][1];
         this.context.beginPath();
@@ -168,6 +169,25 @@ HexagonGrid.prototype.drawPath = function(x0, y0, s0, s1) {
         this.context.stroke();
     }
 };
+
+HexagonGrid.prototype.drawPathTile = function(x0, y0, tid, rot) {
+    var tile = [[1,0,3,2,5,4],
+                [1,0,4,5,2,3],
+                [1,0,5,4,3,2],
+                [2,4,0,5,1,3],
+                [3,4,5,0,1,2]];
+    
+    this.drawHex(x0, y0, "#ddd", "");
+    for(var i = 0; i < this.sideNum; i++){
+        var ss = i;
+        var se = tile[tid][i];
+        ss = (ss + this.sideNum - rot) % this.sideNum;
+        se = (se + this.sideNum - rot) % this.sideNum;
+        this.drawPath(x0, y0, ss, se);
+    }
+
+}
+
 
 //Recusivly step up to the body to calculate canvas offset.
 HexagonGrid.prototype.getRelativeCanvasOffset = function() {
