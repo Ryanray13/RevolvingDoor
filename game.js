@@ -11,17 +11,23 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       hexagon.drawHexGrid(7, 7, 50, 50, true);
       //hexagon.drawPathTile(0, 0, 4, 0);
 
-      $scope.onMouseDown = function onMouseDown($event) {
+      $scope.putToken = function putToken($event) {
           if(!$scope.isYourTurn){
               return;
           }
           try{
-              var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
-              cord = hexagon.offsetToAxial(cord.row, cord.column);
-              console.log(cord);
-              var move = gameLogic.createMove($scope.board, $scope.token, cord.row, cord.column, 0, 0, $scope.turnIndex);
-              console.log(move);
-              sendMakeMove(move);
+              if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] == -1){
+                  //var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
+                  //cord = hexagon.offsetToAxial(cord.row, cord.column);
+                  //console.log(cord);
+
+                  var tileSide = hexagon.getSelectedTileSide($event.pageX, $event.pageY);
+                  console.log(tileSide);
+
+                  var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
+                  console.log(move);
+                  sendMakeMove(move);
+              }
           } catch(e){
               $log.info(["Cell is already full in position:", row, col]);
               return;
