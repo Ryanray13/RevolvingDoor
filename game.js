@@ -14,6 +14,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       $scope.onMouseDown = function onMouseDown($event) {
           console.log($event.pageX + " " + $event.pageY);
           console.log(canvas.offsetLeft + " " + canvas.offsetTop);
+          console.log(hexagon.getSelectedTile($event.pageX, $event.pageY));
       };
 
     function updateUI(params) {

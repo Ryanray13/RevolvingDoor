@@ -39,7 +39,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
 
     var sideNum;
 
-    function init(canvasId, radius) {
+    this.init = function init(canvasId, radius) {
         radius = radius;
     
         height = Math.sqrt(3) * radius;
@@ -56,7 +56,6 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         
         //canvas.addEventListener("mousedown", clickEvent.bind(this), false);
     };
-    this.init = init;
     
     this.drawHexGrid = function drawHexGrid(rows, cols, originX, originY, isDebug) {
         canvasOriginX = originX;
@@ -225,12 +224,16 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
     //Uses a grid overlay algorithm to determine hexagon location
     //Left edge of grid has a test to acuratly determin correct hex
-    function getSelectedTile(mouseX, mouseY) {
+    this.getSelectedTile = function getSelectedTile(mouseX, mouseY) {
     
     	var offSet = getRelativeCanvasOffset();
+        console.log(offSet);
     
         mouseX -= offSet.x;
         mouseY -= offSet.y;
+
+        mouseX -= canvasOriginX;
+        mouseY -= canvasOriginY;
     
         var column = Math.floor((mouseX) / side);
         var row = Math.floor(
@@ -315,10 +318,10 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var mouseX = e.pageX;
         var mouseY = e.pageY;
     
-        var localX = mouseX - canvasOriginX;
-        var localY = mouseY - canvasOriginY;
+        var localX = mouseX;
+        var localY = mouseY;
     
-        var tile = getSelectedTile(localX, localY);
+        var tile = this.getSelectedTile(localX, localY);
         if (tile.column >= 0 && tile.row >= 0) {
             var drawy = tile.column % 2 == 0 ? (tile.row * height) + canvasOriginY + 6 : (tile.row * height) + canvasOriginY + 6 + (height / 2);
             var drawx = (tile.column * side) + canvasOriginX;
