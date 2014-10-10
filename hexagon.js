@@ -39,8 +39,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
 
     var sideNum;
 
-    this.init = function init(canvasId, radius) {
-        radius = radius;
+    this.init = function init(canvasId, r) {
+        radius = r;
     
         height = Math.sqrt(3) * radius;
         width = 2 * radius;
@@ -85,8 +85,9 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
                 }
     
                 drawHex(currentHexX, currentHexY, "#ddd", debugText);
-                //drawPath(currentHexX, currentHexY, 0, 3);
-                this.drawPathTile(currentHexX, currentHexY, 1, 0);
+                //console.log(currentHexX + " " + currentHexY);
+                //drawPath(currentHexX, currentHexY, 0, 2);
+                //this.drawPathTile(currentHexX, currentHexY, 1, 0);
             }
             offsetColumn = !offsetColumn;
         }
@@ -97,6 +98,13 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var drawx = (column * side) + canvasOriginX;
     
         drawHex(drawx, drawy, color, "");
+    };
+
+    this.drawPathTileAtColRow = function drawPathTileAtColRow(column, row, tid, rot) {
+        var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
+        var drawx = (column * side) + canvasOriginX;
+    
+        drawPathTile(drawx, drawy, tid, rot);
     };
     
     function drawHex(x0, y0, fillColor, debugText) {
@@ -109,7 +117,6 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
          \__/
          5  4  */
         console.log("drawHex");
-        console.log((x0 +width)+ "," + (y0 + (height / 2)));
         context.strokeStyle = "#000";
         context.beginPath();
         context.moveTo(x0, y0 + (height / 2)); //0
@@ -165,7 +172,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
                 ve = s1;
             }
             context.beginPath();
-            context.arc(vertex[vs][0],vertex[vs][1],radius/2, 1/3*Math.PI*ve, 2/3*Math.PI + 1/3*Math.PI*ve);
+            context.arc(vertex[vs][0],vertex[vs][1], radius/2, 1/3*Math.PI*ve, 2/3*Math.PI + 1/3*Math.PI*ve);
             context.stroke();
         }
         else if(diff == 2 || diff == 4){
@@ -183,7 +190,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
             var cx = vertex[ve][0] + vertex[ve][0] - vertex[vs][0];
             var cy = vertex[ve][1] + vertex[ve][1] - vertex[vs][1];
             context.beginPath();
-            context.arc(cx,cy,radius*3/2, 1/3*Math.PI*ve, 1/3*Math.PI*ve + 1/3*Math.PI);
+            context.arc(cx,cy, radius*3/2, 1/3*Math.PI*ve, 1/3*Math.PI*ve + 1/3*Math.PI);
             context.stroke();
         }
         else if(diff == 3){
@@ -194,8 +201,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
     };
     
-    this.drawPathTile = function drawPathTile(x0, y0, tid, rot) {
-        console.log("drawPathTile")
+    function drawPathTile(x0, y0, tid, rot) {
+        console.log("drawPathTile");
         var tile = [[1,0,3,2,5,4],
                     [1,0,4,5,2,3],
                     [1,0,5,4,3,2],
@@ -212,6 +219,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
     
     };
+    this.drawPathTile = drawPathTile;
     
     
     //Recusivly step up to the body to calculate canvas offset.
