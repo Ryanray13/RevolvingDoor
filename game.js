@@ -1,11 +1,20 @@
 'use strict';
 
 // TODO: remove stateService before launching the game.
-angular.module('myApp',
-    ['myApp.messageService', 'myApp.gameLogic', 'platformApp'])
-  .controller('Ctrl', function (
+var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'platformApp', 'myApp.hexagon']);
+  app.controller('Ctrl', function (
       $window, $scope, $log,
-      messageService, stateService, gameLogic) {
+      messageService, stateService, gameLogic, hexagon) {
+
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      hexagon.init("canvas", 50);
+      hexagon.drawHexGrid(7, 10, 50, 50, true);
+
+      $scope.onMouseDown = function onMouseDown($event) {
+          console.log($event.pageX + " " + $event.pageY);
+          console.log(canvas.offsetLeft + " " + canvas.offsetTop);
+      };
 
     function updateUI(params) {
       $scope.jsonState = angular.toJson(params.stateAfterMove, true);
