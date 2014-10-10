@@ -129,6 +129,24 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
             return token;
         }
     }
+    function getInitialBoard(){
+        var board = new Array(boardSize);
+        for(var i = 0; i < boardSize; i++){
+            board[i] = new Array(boardSize);
+            for(var j = 0; j < boardSize; j++){
+                board[i][j] = [-1,-1];
+            }
+        }
+
+        var token = new Array(playerNum);
+        for(var i = 0; i < playerNum; i++){
+            token[i] = new Array(3);
+            for(var j = 0; j < 3; j++){
+                token[i][j] = -1;
+            }
+        }
+        return {board: board, token: token};
+    }
 
     function createMove(board, token, row, col, id, rot, turnIndexBeforeMove){
         //console.log("create move");
@@ -227,27 +245,12 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
             var token = stateBeforeMove.token;
 
             // Init Board
-            if(board === undefined){
-                var board = new Array(boardSize);
-                for(var i = 0; i < boardSize; i++){
-                    board[i] = new Array(boardSize);
-                    for(var j = 0; j < boardSize; j++){
-                        board[i][j] = [-1,-1];
-                    }
-                }
+            if(board === undefined || token === undefined){
+                var init = getInitialBoard();
+                board = init.board;
+                token = init.token;
             }
 
-            // Init Token
-            if(token === undefined){
-                var token = new Array(playerNum);
-                for(var i = 0; i < playerNum; i++){
-                    token[i] = new Array(3);
-                    for(var j = 0; j < 3; j++){
-                        token[i][j] = -1;
-                    }
-                }
-            }
-            
 
             if(token[turnIndexBeforeMove][0] === -1){
                 // Phase00: Check if token's initial location is on the edge of board
@@ -283,4 +286,5 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     this.isMoveOk = isMoveOk;
     this.getExampleGame = getExampleGame;
     this.createMove = createMove;
+    this.getInitialBoard= getInitialBoard;
 });

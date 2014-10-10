@@ -189,7 +189,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
     };
     
-    function drawPathTile(x0, y0, tid, rot) {
+    this.drawPathTile = function drawPathTile(x0, y0, tid, rot) {
         var tile = [[1,0,3,2,5,4],
                     [1,0,4,5,2,3],
                     [1,0,5,4,3,2],
@@ -205,7 +205,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
             drawPath(x0, y0, ss, se);
         }
     
-    }
+    };
     
     
     //Recusivly step up to the body to calculate canvas offset.
@@ -227,7 +227,6 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     this.getSelectedTile = function getSelectedTile(mouseX, mouseY) {
     
     	var offSet = getRelativeCanvasOffset();
-        console.log(offSet);
     
         mouseX -= offSet.x;
         mouseY -= offSet.y;
@@ -330,16 +329,16 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         } 
     };
     
-    function axialToOffset(ax, ay) {
-        var ox = ax;
-        var oy = ay + (ax - (ax&1))/2;
-        return [ox, oy];
+    this.axialToOffset = function axialToOffset(arow, acol) {
+        var ocol = acol;
+        var orow = arow + (acol - (acol&1))/2;
+        return {row:orow, column:ocol};
     };
     
-    function offsetToAxial(ox, oy) {
-        var ax = ox;
-        var ay = oy - (ox - (ox&1))/2;
-        return [ax, ay];
+    this.offsetToAxial = function offsetToAxial(orow, ocol) {
+        var acol = ocol;
+        var arow = orow - (ocol - (ocol&1))/2;
+        return {row:arow, column:acol};
     };
 
 });

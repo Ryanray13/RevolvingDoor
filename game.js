@@ -12,44 +12,42 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       hexagon.drawHexGrid(7, 10, 50, 50, true);
 
       $scope.onMouseDown = function onMouseDown($event) {
-          console.log($event.pageX + " " + $event.pageY);
-          console.log(canvas.offsetLeft + " " + canvas.offsetTop);
-          console.log(hexagon.getSelectedTile($event.pageX, $event.pageY));
+          var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
+          cord = hexagon.offsetToAxial(cord.row, cord.column);
+          console.log(cord);
       };
 
     function updateUI(params) {
-      $scope.jsonState = angular.toJson(params.stateAfterMove, true);
-      var board = params.stateAfterMove.board;
-      var token = params.stateAfterMove.token;
-      $scope.board = [['', '', ''],
-                      ['', '', ''],
-                      ['', '', '']];
-      if(board !== undefined){
-        Board = board;
-        var rn = board.length;
-        var cn = board[0].length;
+        $scope.jsonState = angular.toJson(params.stateAfterMove, true);
+        $scope.board = params.stateAfterMove.board;
+        $scope.token = params.stateAfterMove.token;
+
+        if($scope.board === undefined){
+            var init = gameLogic.getInitialBoard();
+            $scope.board = init.board;
+            $scope.token = init.token;
+        }
+
+        var rn = $scope.board.length;
+        var cn = $scope.board[0].length;
         for(var r = 0; r < rn; r++){
             for(var c = 0; c < cn; c++){
-                if(board[r][c][0] === -1){
-                    $scope.board[r][c] = '';
-                }
-                else{
-                    $scope.board[r][c] = board[r][c][0]+' '+board[r][c][1];
+                if($scope.board[r][c][0] !== -1){
+                    var cord = hexagon.offsetToAxial(r, c);
+                    var tid = $scope.board[r][c][0];
+                    var rot = $scope.board[r][c][1];
+                    hexagon.drawPathTile(cord.row, cord.col, tid, rot);
                 }
             }
         }
-      }
-      if(token !== undefined){
-          Token = token;
-          for(var p = 0; p < 2; p++){
-            if(token[p][0] != -1){
-                var r = token[p][0];
-                var c = token[p][1];
-                var e = token[p][2];
-                $scope.board[r][c] = 'token:' + p + ' edge:' + e +' ' + $scope.board[r][c];
-            }
+
+        for(var p = 0; p < 2; p++){
+          if($scope.token[p][0] != -1){
+              var r = $scope.token[p][0];
+              var c = $scope.token[p][1];
+              var e = $scope.token[p][2];
           }
-      }
+        }
     }
     updateUI({stateAfterMove: {}});
     var game = {
@@ -64,7 +62,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       $scope.makeMove = function () {
       $log.info(["Making move:", $scope.move]);
       var moveObj = eval($scope.move);
-          if (isLocalTesting) {
+      if (isLocalTesting) {
         stateService.makeMove(moveObj);
       } else {
         messageService.sendMessage({makeMove: moveObj});
