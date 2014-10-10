@@ -93,6 +93,72 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
     };
     
+    function locHexAtColRow(column, row) {
+        var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
+        var drawx = (column * side) + canvasOriginX;
+        return { x: drawx, y: drawy };
+    }
+
+    function getSelectedTileSide(mouseX, mouseY){
+        var obj = getSelectedTile(mouseX, mouseY);
+
+    	var offSet = getRelativeCanvasOffset();
+    
+        mouseX -= offSet.x;
+        mouseY -= offSet.y;
+
+        var row = obj.row;
+        var column = obj.column;
+
+        var loc = locHexAtColRow(column, row);
+
+        var x0 = loc.x;
+        var y0 = loc.y;
+
+        var vertex = [];
+        vertex[0] = [x0, y0 + (height / 2)];                    //0
+        vertex[1] = [x0 + width - side, y0];                    //1
+        vertex[2] = [x0 + side, y0];                            //2
+        vertex[3] = [x0 + width, y0 + (height / 2)];            //3
+        vertex[4] = [x0 + side, y0 + height];                   //4
+        vertex[5] = [x0 + width - side, y0 + height];           //5
+
+        var ctr = new Object();
+        ctr.x = vertex[0][0] + radius;
+        ctr.y = vertex[0][1];
+
+        var mousePoint = new Object();
+        mousePoint.x = mouseX;
+        mousePoint.y = mouseY;
+
+        var s = -1;
+
+        for(var i = 0; i < sideNum; i++){
+            var vs = new Object();
+            vs.x = vertex[i][0];
+            vs.y = vertex[i][1];
+
+            var ve = new Object();
+            ve.x = vertex[(i+1)%sideNum][0];
+            ve.y = vertex[(i+1)%sideNum][1];
+
+            if(isPointInTriangle(mousePoint, ctr, vs, ve)){
+                s = i;
+                context.strokeStyle = "#000";
+                context.beginPath();
+                context.moveTo(ctr.x, ctr.y); //0
+                context.lineTo(vs.x, vs.y); //0
+                context.lineTo(ve.x, ve.y); //0
+                context.closePath();
+                context.stroke();
+                break;
+            }
+        }
+
+        return  { row: row, column: column, side: s };
+    }
+    this.getSelectedTileSide = getSelectedTileSide;
+
     function drawHexAtColRow(column, row, color) {
         var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
         var drawx = (column * side) + canvasOriginX;
@@ -238,7 +304,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
     //Uses a grid overlay algorithm to determine hexagon location
     //Left edge of grid has a test to acuratly determin correct hex
-    this.getSelectedTile = function getSelectedTile(mouseX, mouseY) {
+    function getSelectedTile(mouseX, mouseY) {
     
     	var offSet = getRelativeCanvasOffset();
     
@@ -310,7 +376,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
         return  { row: row, column: column };
     };
-    
+
+    this.getSelectedTile = getSelectedTile;
     
     function sign(p1, p2, p3) {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
@@ -334,7 +401,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var localX = mouseX;
         var localY = mouseY;
     
-        var tile = this.getSelectedTile(localX, localY);
+        var tile = getSelectedTile(localX, localY);
         if (tile.column >= 0 && tile.row >= 0) {
             var drawy = tile.column % 2 == 0 ? (tile.row * height) + canvasOriginY + 6 : (tile.row * height) + canvasOriginY + 6 + (height / 2);
             var drawx = (tile.column * side) + canvasOriginX;
