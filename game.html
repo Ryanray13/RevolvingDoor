@@ -16,6 +16,15 @@
 </head>
 <body ng-controller="Ctrl">
     <canvas id="canvas" ng-mousedown="putToken($event)" width="1000" height="700"></canvas>
+
+    <br>
+    <button id="tile0" ng-click ="selTile(0)">0</button>
+    <button id="tile1" ng-click ="selTile(1)">1</button>
+    <button id="tile2" ng-click ="selTile(2)">2</button>
+    <button id="tile3" ng-click ="selTile(3)">3</button>
+    <button id="tile4" ng-click ="selTile(4)">4</button>
+    <button id="turn"  ng-click ="turnTile()">turn</button>
+    <button id="move"  ng-click ="makeMove()">move</button>
     <!--
   <textarea ng-model="jsonState" rows=10 cols=100 readonly></textarea>
   <table border="1">

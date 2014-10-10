@@ -10,6 +10,8 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       hexagon.init("canvas", 50);
       hexagon.drawHexGrid(7, 7, 50, 50, true);
       //hexagon.drawPathTile(0, 0, 4, 0);
+      $scope.tid = 0;
+      $scope.rot = 0;
 
       $scope.putToken = function putToken($event) {
           if(!$scope.isYourTurn){
@@ -22,10 +24,9 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                   //console.log(cord);
 
                   var tileSide = hexagon.getSelectedTileSide($event.pageX, $event.pageY);
-                  console.log(tileSide);
+                  //console.log(tileSide);
 
                   var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
-                  console.log(move);
                   sendMakeMove(move);
               }
           } catch(e){
@@ -33,6 +34,42 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
               return;
           }
       };
+
+    $scope.selTile = function selTile(tileId) {
+        if(!$scope.isYourTurn){
+            return;
+        }
+        try{
+            if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
+                $scope.tid = tileId;
+                $scope.rot = 0;
+                var row = $scope.token[$scope.turnIndex][0];
+                var column = $scope.token[$scope.turnIndex][1];
+                hexagon.drawPathTileAtColRow(column, row, $scope.tid, $scope.rot);
+            }
+        } catch(e){
+            $log.info(["Cell is already full in position:", row, col]);
+            return;
+        }
+    };
+
+    $scope.turnTile = function turnTile() {
+        if(!$scope.isYourTurn){
+            return;
+        }
+        try{
+            if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
+                console.log(hexagon.sideNum);
+                $scope.rot = ($scope.rot + 1)%hexagon.sideNum;
+                var row = $scope.token[$scope.turnIndex][0];
+                var column = $scope.token[$scope.turnIndex][1];
+                hexagon.drawPathTileAtColRow(column, row, $scope.tid, $scope.rot);
+            }
+        } catch(e){
+            $log.info(["Cell is already full in position:", row, col]);
+            return;
+        }
+    };
 
     function updateUI(params) {
         $scope.isYourTurn = params.turnIndexAfterMove >= 0 && // game is ongoing
@@ -87,8 +124,10 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
     $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]";
 
     $scope.makeMove = function () {
-      $log.info(["Making move:", $scope.move]);
-      var moveObj = eval($scope.move);
+      var row = $scope.token[$scope.turnIndex][0];
+      var column = $scope.token[$scope.turnIndex][1];
+      var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid, $scope.rot, $scope.turnIndex);
+      $log.info(["Making move:", moveObj]);
       sendMakeMove(moveObj);
     };
 

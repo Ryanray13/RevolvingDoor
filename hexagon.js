@@ -53,6 +53,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         canvasOriginY = 0;
     
         sideNum = 6;
+        this.sideNum = sideNum;
         
         //canvas.addEventListener("mousedown", clickEvent.bind(this), false);
     };
