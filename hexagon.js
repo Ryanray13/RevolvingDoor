@@ -57,6 +57,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         
         //canvas.addEventListener("mousedown", clickEvent.bind(this), false);
     };
+
     
     this.drawHexGrid = function drawHexGrid(rows, cols, originX, originY, isDebug) {
         canvasOriginX = originX;
@@ -173,6 +174,33 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
         drawPathTile(drawx, drawy, tid, rot);
     };
+
+    function drawPathTileSide(column, row, s){
+        var y0 = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
+        var x0 = (column * side) + canvasOriginX;
+
+        var sidePt = [];
+        var vertex = [];
+
+        vertex[0] = [x0, y0 + (height / 2)];                    //0
+        vertex[1] = [x0 + width - side, y0];                    //1
+        vertex[2] = [x0 + side, y0];                            //2
+        vertex[3] = [x0 + width, y0 + (height / 2)];            //3
+        vertex[4] = [x0 + side, y0 + height];                   //4
+        vertex[5] = [x0 + width - side, y0 + height];           //5
+
+    
+        for(var i = 0; i < sideNum; i++){
+            sidePt[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
+        }
+
+        context.strokeStyle = "#000";
+        context.beginPath();
+        context.arc(sidePt[s][0],sidePt[s][1], radius/4, 0, 2*Math.PI);
+        context.stroke();
+
+    }
+    this.drawPathTileSide = drawPathTileSide;
     
     function drawHex(x0, y0, fillColor, debugText) {
     

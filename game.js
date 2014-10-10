@@ -104,9 +104,10 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
 
         for(var p = 0; p < 2; p++){
           if($scope.token[p][0] != -1){
-              var r = $scope.token[p][0];
-              var c = $scope.token[p][1];
-              var e = $scope.token[p][2];
+              var row    = $scope.token[p][0];
+              var column = $scope.token[p][1];
+              var s      = $scope.token[p][2];
+              hexagon.drawPathTileSide(column, row, s);
           }
         }
     }
