@@ -149,6 +149,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     }
 
     function createMove(board, token, row, col, id, rot, turnIndexBeforeMove){
+        board = copyObject(board);
+        token = copyObject(token);
         //console.log("create move");
         var firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
         if(token[turnIndexBeforeMove][0] === -1){
@@ -227,7 +229,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
 
 
     function isMoveOk(params){
-        return true;
+        //return true;
         var move = params.move;
         var turnIndexBeforeMove = params.turnIndexBeforeMove;
         var stateBeforeMove = params.stateBeforeMove;
