@@ -85,7 +85,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
                 }
     
                 drawHex(currentHexX, currentHexY, "#ddd", debugText);
-                //drawPathTile(currentHexX, currentHexY, 1, 4);
+                //drawPath(currentHexX, currentHexY, 0, 3);
+                this.drawPathTile(currentHexX, currentHexY, 1, 0);
             }
             offsetColumn = !offsetColumn;
         }
@@ -107,6 +108,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
        0 /  \ 3
          \__/
          5  4  */
+        console.log("drawHex");
+        console.log((x0 +width)+ "," + (y0 + (height / 2)));
         context.strokeStyle = "#000";
         context.beginPath();
         context.moveTo(x0, y0 + (height / 2)); //0
@@ -132,18 +135,20 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     };
     
     function drawPath(x0, y0, s0, s1) {
-        var side = [];
+        console.log("drawPath");
+        var sidePt = [];
         var vertex = [];
-    
+
         vertex[0] = [x0, y0 + (height / 2)];                    //0
-        vertex[1] = [x0 + width - side, y0];               //1
+        vertex[1] = [x0 + width - side, y0];                    //1
         vertex[2] = [x0 + side, y0];                            //2
-        vertex[3] = [x0 + width, y0 + (height / 2)];       //3
-        vertex[4] = [x0 + side, y0 + height];              //4
-        vertex[5] = [x0 + width - side, y0 + height]; //5
+        vertex[3] = [x0 + width, y0 + (height / 2)];            //3
+        vertex[4] = [x0 + side, y0 + height];                   //4
+        vertex[5] = [x0 + width - side, y0 + height];           //5
+
     
         for(var i = 0; i < sideNum; i++){
-            side[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
+            sidePt[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
         }
     
         var diff = Math.abs(s1 - s0);
@@ -183,13 +188,14 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
         else if(diff == 3){
             //Draw a line
-            context.moveTo(side[s0][0], side[s0][1]); 
-            context.lineTo(side[s1][0], side[s1][1]); 
+            context.moveTo(sidePt[s0][0], sidePt[s0][1]); 
+            context.lineTo(sidePt[s1][0], sidePt[s1][1]); 
             context.stroke();
         }
     };
     
     this.drawPathTile = function drawPathTile(x0, y0, tid, rot) {
+        console.log("drawPathTile")
         var tile = [[1,0,3,2,5,4],
                     [1,0,4,5,2,3],
                     [1,0,5,4,3,2],
