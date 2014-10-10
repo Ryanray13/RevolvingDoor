@@ -7,17 +7,33 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       messageService, stateService, gameLogic, hexagon) {
 
       var canvas = document.getElementById("canvas");
-      var ctx = canvas.getContext("2d");
       hexagon.init("canvas", 50);
-      hexagon.drawHexGrid(7, 10, 50, 50, true);
+      hexagon.drawHexGrid(7, 7, 50, 50, true);
+      //hexagon.drawPathTile(0, 0, 4, 0);
 
       $scope.onMouseDown = function onMouseDown($event) {
-          var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
-          cord = hexagon.offsetToAxial(cord.row, cord.column);
-          console.log(cord);
+          if(!$scope.isYourTurn){
+              return;
+          }
+          try{
+              var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
+              cord = hexagon.offsetToAxial(cord.row, cord.column);
+              console.log(cord);
+              var move = gameLogic.createMove($scope.board, $scope.token, cord.row, cord.column, 0, 0, $scope.turnIndex);
+              console.log(move);
+              sendMakeMove(move);
+          } catch(e){
+              $log.info(["Cell is already full in position:", row, col]);
+              return;
+          }
       };
 
     function updateUI(params) {
+        $scope.isYourTurn = params.turnIndexAfterMove >= 0 && // game is ongoing
+                            params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
+        $scope.turnIndex = params.turnIndexAfterMove;
+        console.log("updateUI " + $scope.turnIndex);
+
         $scope.jsonState = angular.toJson(params.stateAfterMove, true);
         $scope.board = params.stateAfterMove.board;
         $scope.token = params.stateAfterMove.token;
@@ -33,10 +49,12 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         for(var r = 0; r < rn; r++){
             for(var c = 0; c < cn; c++){
                 if($scope.board[r][c][0] !== -1){
-                    var cord = hexagon.offsetToAxial(r, c);
+                    var cord = hexagon.axialToOffset(r, c);
                     var tid = $scope.board[r][c][0];
                     var rot = $scope.board[r][c][1];
-                    hexagon.drawPathTile(cord.row, cord.col, tid, rot);
+                    console.log("drawing");
+                    console.log(cord);
+                    hexagon.drawPathTileAtColRow(cord.column, cord.row, tid, rot);
                 }
             }
         }
@@ -49,7 +67,8 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
           }
         }
     }
-    updateUI({stateAfterMove: {}});
+    updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
+
     var game = {
       gameDeveloperEmail: "angieyayabird@gmail.com",
       minNumberOfPlayers: 2,
@@ -58,15 +77,22 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
     };
 
     var isLocalTesting = $window.location.origin === "file://";
-    $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]"
-      $scope.makeMove = function () {
+
+    $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]";
+
+    $scope.makeMove = function () {
       $log.info(["Making move:", $scope.move]);
       var moveObj = eval($scope.move);
-      if (isLocalTesting) {
-        stateService.makeMove(moveObj);
-      } else {
-        messageService.sendMessage({makeMove: moveObj});
-      }
+      sendMakeMove(moveObj);
+    };
+
+    function sendMakeMove(move){
+        $log.info(["Making move:", move]);
+        if (isLocalTesting) {
+            stateService.makeMove(move);
+        } else {
+            messageService.sendMessage({makeMove: move});
+        }
     };
 
     if (isLocalTesting) {

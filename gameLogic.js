@@ -227,6 +227,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
 
 
     function isMoveOk(params){
+        return true;
         var move = params.move;
         var turnIndexBeforeMove = params.turnIndexBeforeMove;
         var stateBeforeMove = params.stateBeforeMove;
