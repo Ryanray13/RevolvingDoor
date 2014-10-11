@@ -1,10 +1,10 @@
 'use strict';
 
 // TODO: remove stateService before launching the game.
-var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'platformApp', 'myApp.hexagon']);
+var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'platformApp', 'myApp.hexagon', 'myApp.scaleBodyService']);
   app.controller('Ctrl', function (
       $window, $scope, $log,
-      messageService, stateService, gameLogic, hexagon) {
+      messageService, stateService, gameLogic, hexagon, scaleBodyService) {
 
       var canvas = document.getElementById("canvas");
       hexagon.init("canvas", 50);
@@ -158,6 +158,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       exampleGame: gameLogic.getExampleGame(),
     };
 
+    //scaleBodyService.scaleBody({width: 1000, height: 1000});
     var isLocalTesting = $window.parent === $window;
 
     $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]";
