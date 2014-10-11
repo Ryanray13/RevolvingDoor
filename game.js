@@ -54,6 +54,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                   }
               }
               else{
+                  /*
                   // offset coordinate
                   var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
                   console.log(cord);
@@ -66,6 +67,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                   else if((cord.row == 6 && cord.column == 1) || (cord.row == 1 && cord.column == 4)){
                       $scope.makeMove();
                   }
+                  */
               }
           } catch(e){
               $log.info(["Cell is already full in position:", row, col]);
@@ -85,7 +87,9 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                 $scope.rot = 0;
                 var row = $scope.token[$scope.turnIndex][0];
                 var column = $scope.token[$scope.turnIndex][1];
+                var s = $scope.token[$scope.turnIndex][2];
                 hexagon.drawPathTileAtColRow(column, row, $scope.tid, $scope.rot);
+                hexagon.drawSelectedTileSide(column, row, s);
             }
         } catch(e){
             $log.info(["Cell is already full in position:", row, col]);
@@ -102,7 +106,9 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                 $scope.rot = ($scope.rot + 1)%hexagon.sideNum;
                 var row = $scope.token[$scope.turnIndex][0];
                 var column = $scope.token[$scope.turnIndex][1];
+                var s = $scope.token[$scope.turnIndex][2];
                 hexagon.drawPathTileAtColRow(column, row, $scope.tid, $scope.rot);
+                hexagon.drawSelectedTileSide(column, row, s);
             }
         } catch(e){
             $log.info(["Cell is already full in position:", row, col]);

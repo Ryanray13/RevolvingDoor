@@ -15,11 +15,11 @@
   <!-- for local testing purposes ! -->
   <script src="http://yoav-zibin.github.io/emulator/platform.js"></script>
 </head>
-<body ng-controller="Ctrl" bgcolor= "#000000">
+<body ng-controller="Ctrl" bgcolor= "#000000" width="700" height="800">
     <canvas id="canvas"  ng-mousedown="mouseDown($event)" width="700" height="800"></canvas>
     <br>
-    <img id="ok" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = false> </img>
-    <img id="ok" ng-click ="turnTile()" src="turn.png" width="70" height="70" ng-hide = false> </img>
+    <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = false> </img>
+    <img id="turn" ng-click ="turnTile()" src="turn.png" width="70" height="70" ng-hide = false> </img>
     <img id="ok" ng-click ="makeMove()" src="ok.png" width="70" height="70" ng-hide = false> </img>
 
     <!--
