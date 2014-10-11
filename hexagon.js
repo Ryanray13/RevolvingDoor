@@ -103,7 +103,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
                     //this.drawPathTile(currentHexX, currentHexY, 1, 0);
                 }
                 else{
-                    drawHex(currentHexX, currentHexY, "#fff", debugText);
+                    //drawHex(currentHexX, currentHexY, "#fff", debugText);
                 }
             }
             offsetColumn = !offsetColumn;

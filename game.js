@@ -13,6 +13,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       $scope.tid = 0;
       $scope.rot = 0;
 
+      /*
       var prevTileSide = undefined;
       $scope.mouseMove= function mouseMove($event) {
           if(!$scope.isYourTurn){
@@ -36,6 +37,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
               return;
           }
       };
+      */
 
       $scope.mouseDown= function mouseDown($event) {
           if(!$scope.isYourTurn){
@@ -46,10 +48,6 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
 
                   var tileSide = hexagon.getSelectedTileSide($event.pageX, $event.pageY);
                   console.log(tileSide);
-                  if(prevTileSide !== undefined){
-                      hexagon.drawHexAtColRow(prevTileSide.column, prevTileSide.row, "#000");
-                      prevTileSide = undefined;
-                  }
                   if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
                      var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
                      sendMakeMove(move);
@@ -160,7 +158,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       exampleGame: gameLogic.getExampleGame(),
     };
 
-    var isLocalTesting = $window.location.origin === "file://";
+    var isLocalTesting = $window.parent === $window;
 
     $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]";
 

@@ -15,12 +15,12 @@
   <script src="http://yoav-zibin.github.io/emulator/platform.js"></script>
 </head>
 <body ng-controller="Ctrl" bgcolor= "#000000">
-    <canvas id="canvas" ng-mouseleave="mouseLeave($event)" ng-mousemove="mouseMove($event)" ng-mousedown="mouseDown($event)" width="700" height="800"></canvas>
-
+    <canvas id="canvas"  ng-mousedown="mouseDown($event)" width="700" height="800"></canvas>
     <br>
-    <button id="tile0" ng-click ="selTile()">switch</button>
-    <button id="turn"  ng-click ="turnTile()">turn</button>
-    <button id="move"  ng-click ="makeMove()">move</button>
+    <img id="ok" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = false> </img>
+    <img id="ok" ng-click ="turnTile()" src="turn.png" width="70" height="70" ng-hide = false> </img>
+    <img id="ok" ng-click ="makeMove()" src="ok.png" width="70" height="70" ng-hide = false> </img>
+
     <!--
   <textarea ng-model="jsonState" rows=10 cols=100 readonly></textarea>
   <table border="1">
