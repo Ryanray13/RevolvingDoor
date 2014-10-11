@@ -81,7 +81,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
 
     var opposite = [3,4,5,0,1,2]; 
     var edgeNum = 6;
-    var boardSize = 3;
+    var boardSize = 6;
     var playerNum = 2;
     function isEqual(object1, object2) {
         //console.log(JSON.stringify(object1));

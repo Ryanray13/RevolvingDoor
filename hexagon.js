@@ -157,7 +157,9 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
             }
         }
 
-        return  { row: row, column: column, side: s };
+        var cord = offsetToAxial(row, column);
+
+        return  { row: cord.row, column: cord.column, side: s };
     }
     this.getSelectedTileSide = getSelectedTileSide;
 

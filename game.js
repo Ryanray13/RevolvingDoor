@@ -8,7 +8,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
 
       var canvas = document.getElementById("canvas");
       hexagon.init("canvas", 50);
-      hexagon.drawHexGrid(7, 7, 50, 50, true);
+      hexagon.drawHexGrid(8, 6, 50, 50, true);
       //hexagon.drawPathTile(0, 0, 4, 0);
       $scope.tid = 0;
       $scope.rot = 0;
@@ -24,7 +24,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                   //console.log(cord);
 
                   var tileSide = hexagon.getSelectedTileSide($event.pageX, $event.pageY);
-                  //console.log(tileSide);
+                  console.log(tileSide);
 
                   var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
                   sendMakeMove(move);
@@ -36,7 +36,9 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       };
 
     $scope.selTile = function selTile(tileId) {
+        console.log("selTile");
         if(!$scope.isYourTurn){
+            console.log("not your turn");
             return;
         }
         try{
@@ -92,12 +94,10 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         for(var r = 0; r < rn; r++){
             for(var c = 0; c < cn; c++){
                 if($scope.board[r][c][0] !== -1){
-                    var cord = hexagon.axialToOffset(r, c);
                     var tid = $scope.board[r][c][0];
                     var rot = $scope.board[r][c][1];
                     console.log("drawing");
-                    console.log(cord);
-                    hexagon.drawPathTileAtColRow(cord.column, cord.row, tid, rot);
+                    hexagon.drawPathTileAtColRow(c, r, tid, rot);
                 }
             }
         }
