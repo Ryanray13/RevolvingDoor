@@ -83,6 +83,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     var edgeNum = 6;
     var boardSize = 6;
     var playerNum = 2;
+    var tileNum = 5;
     function isEqual(object1, object2) {
         //console.log(JSON.stringify(object1));
         //console.log(JSON.stringify(object2));
@@ -95,13 +96,21 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
 
     // check if token's location is at the edge of board
     function isEdge(row, col, edg){
-        if(row+dir[edg][0]<0 || row+dir[edg][0]>=boardSize){
-            return true;
+
+        try{
+            if(row < 0 || row >= boardSize || col < 0 || col >= boardSize){
+                return false;
+            }
+            if(row+dir[edg][0]==-1 || row+dir[edg][0]==boardSize){
+                return true;
+            }
+            if(col+dir[edg][1]==-1 || col+dir[edg][1]==boardSize){
+                return true;
+            }
+            return false;
+        } catch(e){
+            return false;
         }
-        if(col+dir[edg][1]<0 || col+dir[edg][1]>=boardSize){
-            return true;
-        }
-        return false;
     }
 
     function updateToken(board, token, tokenId){
@@ -292,4 +301,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     this.getExampleGame = getExampleGame;
     this.createMove = createMove;
     this.getInitialBoard= getInitialBoard;
+    this.boardSize = boardSize;
+    this.tileNum = tileNum;
+    this.isEdge = isEdge;
 });

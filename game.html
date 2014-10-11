@@ -14,15 +14,11 @@
   <!-- for local testing purposes ! -->
   <script src="http://yoav-zibin.github.io/emulator/platform.js"></script>
 </head>
-<body ng-controller="Ctrl">
-    <canvas id="canvas" ng-mousedown="putToken($event)" width="700" height="800"></canvas>
+<body ng-controller="Ctrl" bgcolor= "#000000">
+    <canvas id="canvas" ng-mouseleave="mouseLeave($event)" ng-mousemove="mouseMove($event)" ng-mousedown="mouseDown($event)" width="700" height="800"></canvas>
 
     <br>
-    <button id="tile0" ng-click ="selTile(0)">0</button>
-    <button id="tile1" ng-click ="selTile(1)">1</button>
-    <button id="tile2" ng-click ="selTile(2)">2</button>
-    <button id="tile3" ng-click ="selTile(3)">3</button>
-    <button id="tile4" ng-click ="selTile(4)">4</button>
+    <button id="tile0" ng-click ="selTile()">switch</button>
     <button id="turn"  ng-click ="turnTile()">turn</button>
     <button id="move"  ng-click ="makeMove()">move</button>
     <!--

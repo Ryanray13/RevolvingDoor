@@ -54,12 +54,19 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
         sideNum = 6;
         this.sideNum = sideNum;
+        this.color = "#FFCC00";
+        this.lineWidth = "5";
+
+        context.strokeStyle = this.color;
+        context.lineWidth = this.lineWidth;
+
+
         
         //canvas.addEventListener("mousedown", clickEvent.bind(this), false);
     };
 
     
-    this.drawHexGrid = function drawHexGrid(rows, cols, originX, originY, isDebug) {
+    this.drawHexGrid = function drawHexGrid(rows, cols, originX, originY, boardSize ,isDebug) {
         canvasOriginX = originX;
         canvasOriginY = originY;
         
@@ -71,7 +78,6 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
         for (var col = 0; col < cols; col++) {
             for (var row = 0; row < rows; row++) {
-    
                 if (!offsetColumn) {
                     currentHexX = (col * side) + originX;
                     currentHexY = (row * height) + originY;
@@ -80,16 +86,25 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
                     currentHexY = (row * height) + originY + (height * 0.5);
                 }
     
+                var cord = offsetToAxial(row, col) ;
+
                 if (isDebug) {
-                    //var tr = offsetToAxial(col, row);
+                    //var tr = offsetToAxial(row, col);
                     //debugText = tr[0]+ "," + tr[1];
                     debugText = col+ "," + row;
                 }
+
+                console.log("boardSize:" + boardSize);
+                if(cord.row >= 0 && cord.row < boardSize && cord.column >= 0 && cord.column < boardSize){
     
-                drawHex(currentHexX, currentHexY, "#ddd", debugText);
-                //console.log(currentHexX + " " + currentHexY);
-                //drawPath(currentHexX, currentHexY, 0, 2);
-                //this.drawPathTile(currentHexX, currentHexY, 1, 0);
+                    drawHex(currentHexX, currentHexY, "#000", debugText);
+                    //console.log(currentHexX + " " + currentHexY);
+                    //drawPath(currentHexX, currentHexY, 0, 2);
+                    //this.drawPathTile(currentHexX, currentHexY, 1, 0);
+                }
+                else{
+                    drawHex(currentHexX, currentHexY, "#fff", debugText);
+                }
             }
             offsetColumn = !offsetColumn;
         }
@@ -100,6 +115,57 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var drawx = (column * side) + canvasOriginX;
         return { x: drawx, y: drawy };
     }
+
+    function drawSelectedTileSide(column, row, s){
+
+        var cord = axialToOffset(row, column);
+        row = cord.row;
+        column = cord.column;
+
+        var loc = locHexAtColRow(column, row);
+        var x0 = loc.x;
+        var y0 = loc.y;
+
+        var vertex = [];
+        vertex[0] = [x0, y0 + (height / 2)];                    //0
+        vertex[1] = [x0 + width - side, y0];                    //1
+        vertex[2] = [x0 + side, y0];                            //2
+        vertex[3] = [x0 + width, y0 + (height / 2)];            //3
+        vertex[4] = [x0 + side, y0 + height];                   //4
+        vertex[5] = [x0 + width - side, y0 + height];           //5
+
+        var ctr = new Object();
+        ctr.x = vertex[0][0] + radius;
+        ctr.y = vertex[0][1];
+
+        var vs = new Object();
+        vs.x = vertex[s][0];
+        vs.y = vertex[s][1];
+
+        var ve = new Object();
+        ve.x = vertex[(s+1)%sideNum][0];
+        ve.y = vertex[(s+1)%sideNum][1];
+
+
+        context.lineWidth = "1";
+        context.beginPath();
+        context.moveTo(ctr.x, ctr.y); //0
+        context.lineTo(vs.x, vs.y); //0
+        context.lineTo(ve.x, ve.y); //0
+        context.closePath();
+
+        context.fillStyle = this.color;
+        context.fill();
+
+        context.stroke();
+
+        context.lineWidth = this.lineWidth;
+
+        /*
+        */
+
+    }
+    this.drawSelectedTileSide = drawSelectedTileSide;
 
     function getSelectedTileSide(mouseX, mouseY){
         var obj = getSelectedTile(mouseX, mouseY);
@@ -146,13 +212,13 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
 
             if(isPointInTriangle(mousePoint, ctr, vs, ve)){
                 s = i;
-                context.strokeStyle = "#000";
-                context.beginPath();
-                context.moveTo(ctr.x, ctr.y); //0
-                context.lineTo(vs.x, vs.y); //0
-                context.lineTo(ve.x, ve.y); //0
-                context.closePath();
-                context.stroke();
+                //context.strokeStyle = "#000";
+                //context.beginPath();
+                //context.moveTo(ctr.x, ctr.y); //0
+                //context.lineTo(vs.x, vs.y); //0
+                //context.lineTo(ve.x, ve.y); //0
+                //context.closePath();
+                //context.stroke();
                 break;
             }
         }
@@ -164,11 +230,20 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     this.getSelectedTileSide = getSelectedTileSide;
 
     function drawHexAtColRow(column, row, color) {
+
+        var cord = axialToOffset(row, column);
+        row = cord.row;
+        column = cord.column;
+
         var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
         var drawx = (column * side) + canvasOriginX;
     
         drawHex(drawx, drawy, color, "");
     };
+
+    this.drawHexAtColRow = drawHexAtColRow;
+
+
 
     this.drawPathTileAtColRow = function drawPathTileAtColRow(column, row, tid, rot) {
         var cord = axialToOffset(row, column);
@@ -204,7 +279,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
             sidePt[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
         }
 
-        context.strokeStyle = "#000";
+        //context.strokeStyle = "#000";
         context.beginPath();
         context.arc(sidePt[s][0],sidePt[s][1], radius/4, 0, 2*Math.PI);
         context.stroke();
@@ -222,7 +297,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
          \__/
          5  4  */
         //console.log("drawHex");
-        context.strokeStyle = "#000";
+        //context.strokeStyle = "#000";
         context.beginPath();
         context.moveTo(x0, y0 + (height / 2)); //0
         context.lineTo(x0 + width - side, y0); //1
@@ -314,7 +389,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
                     [2,4,0,5,1,3],
                     [3,4,5,0,1,2]];
         
-        drawHex(x0, y0, "#ddd", "");
+        drawHex(x0, y0, "#000", "");
         for(var i = 0; i < sideNum; i++){
             var ss = i;
             var se = tile[tid][i];
