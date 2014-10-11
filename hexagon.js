@@ -116,7 +116,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         return { x: drawx, y: drawy };
     }
 
-    function drawSelectedTileSide(column, row, s){
+    function drawSelectedTileSide(column, row, s, c){
 
         var cord = axialToOffset(row, column);
         row = cord.row;
@@ -155,6 +155,10 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         context.closePath();
 
         context.fillStyle = this.color;
+
+        if(c !== undefined){
+            context.fillStyle = c;
+        }
         context.fill();
 
         context.stroke();
