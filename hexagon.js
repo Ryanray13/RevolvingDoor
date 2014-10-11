@@ -169,6 +169,10 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     };
 
     this.drawPathTileAtColRow = function drawPathTileAtColRow(column, row, tid, rot) {
+        var cord = axialToOffset(row, column);
+        row = cord.row;
+        column = cord.column;
+
         var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
         var drawx = (column * side) + canvasOriginX;
     
@@ -176,6 +180,10 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     };
 
     function drawPathTileSide(column, row, s){
+        var cord = axialToOffset(row, column);
+        row = cord.row;
+        column = cord.column;
+
         var y0 = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
         var x0 = (column * side) + canvasOriginX;
 
@@ -211,7 +219,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
        0 /  \ 3
          \__/
          5  4  */
-        console.log("drawHex");
+        //console.log("drawHex");
         context.strokeStyle = "#000";
         context.beginPath();
         context.moveTo(x0, y0 + (height / 2)); //0
@@ -237,7 +245,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     };
     
     function drawPath(x0, y0, s0, s1) {
-        console.log("drawPath");
+        //console.log("drawPath");
         var sidePt = [];
         var vertex = [];
 
@@ -297,7 +305,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     };
     
     function drawPathTile(x0, y0, tid, rot) {
-        console.log("drawPathTile");
+        //console.log("drawPathTile");
         var tile = [[1,0,3,2,5,4],
                     [1,0,4,5,2,3],
                     [1,0,5,4,3,2],
@@ -439,16 +447,18 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         } 
     };
     
-    this.axialToOffset = function axialToOffset(arow, acol) {
+    function axialToOffset(arow, acol) {
         var ocol = acol;
         var orow = arow + (acol - (acol&1))/2;
         return {row:orow, column:ocol};
     };
+    this.axialToOffset = axialToOffset;
     
-    this.offsetToAxial = function offsetToAxial(orow, ocol) {
+    function offsetToAxial(orow, ocol) {
         var acol = ocol;
         var arow = orow - (ocol - (ocol&1))/2;
         return {row:arow, column:acol};
     };
+    this.offsetToAxial = offsetToAxial;
 
 });

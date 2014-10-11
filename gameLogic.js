@@ -111,6 +111,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
         var id = board[row][col][0];
         var rot = board[row][col][1];
         if(id != -1){
+            console.log("update token: " + tokenId);
+            console.log(token[tokenId]);
             edg = (tile[id][(edg+rot)%edgeNum]+edgeNum-rot)%edgeNum;
             if(isEdge(row, col, edg)){
                 token[tokenId][2] = edg;
