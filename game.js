@@ -146,7 +146,8 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
               var row    = $scope.token[p][0];
               var column = $scope.token[p][1];
               var s      = $scope.token[p][2];
-              hexagon.drawPathTileSide(column, row, s);
+              //hexagon.drawPathTileSide(column, row, s);
+              hexagon.drawSelectedTileSide(column, row, s);
           }
         }
     }
