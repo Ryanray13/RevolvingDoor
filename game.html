@@ -9,11 +9,20 @@
   <script src="components/angular/angular.js"></script>
   <script src="game.js"></script>
   <script src="gameLogic.js"></script>
+  <script src="hexagon.js"></script>
   <script src="messageService.js"></script>
+  <script src="scaleBodyService.js"></script>
   <!-- for local testing purposes ! -->
   <script src="http://yoav-zibin.github.io/emulator/platform.js"></script>
 </head>
-<body ng-controller="Ctrl">
+<body ng-controller="Ctrl" bgcolor= "#000000" width="700" height="800">
+    <canvas id="canvas"  ng-mousedown="mouseDown($event)" width="700" height="800"></canvas>
+    <br>
+    <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = false> </img>
+    <img id="turn" ng-click ="turnTile()" src="turn.png" width="70" height="70" ng-hide = false> </img>
+    <img id="ok" ng-click ="makeMove()" src="ok.png" width="70" height="70" ng-hide = false> </img>
+
+    <!--
   <textarea ng-model="jsonState" rows=10 cols=100 readonly></textarea>
   <table border="1">
     <tr width="50px" height="50px" ng-repeat="row in board track by $index">
@@ -48,5 +57,6 @@
   <textarea ng-model="move" rows=10 cols=100></textarea>
   <br>
   <button ng-click="makeMove()">Make move</button>
+  !-->
 </body>
 </html>
