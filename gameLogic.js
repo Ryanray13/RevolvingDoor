@@ -188,7 +188,9 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
         return [firstOperation,
                {set: {key: 'board', value: board}},
                {set: {key: 'token', value: token}},
-               {set: {key: 'delta', value: {row: row, col: col, id: id, rot: rot}}}];
+               {set: {key: 'delta', value: {row: row, col: col, id: id, rot: rot}}},
+               {setRandomInteger: {key: 't0', from: 0, to: 5}},
+               {setRandomInteger: {key: 't1', from: 0, to: 5}}]; // 5 is not included
     }
     /** Returns an array of {stateBeforeMove, move, comment}. */
     function getExampleMoves(initialTurnIndex, initialState, arrayOfRowColComment) {
@@ -249,7 +251,9 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
             // [{setturn: {turnindex : 1},
             //  {set: {key: 'board', value: [[[4,0], [1,1], [-1,-1]],[[-1,-1],[0,1],[-1,-1]],[[-1,-1],[1,1],[0,0]]}},
             //  {set: {key: 'token', value: [[0,1,4], [2,2,1]]}},
-            //  {set: {key: 'delta', value: {row: 1, col: 1, id: 0, rot: 1, token: [1,1,2]}}}]
+            //  {set: {key: 'delta', value: {row: 1, col: 1, id: 0, rot: 1, token: [1,1,2]}},
+            //  {setRandomInteger: {key: 't0', from: 0, to: 6}},
+            //  {setRandomInteger: {key: 't1', from: 0, to: 6}}]
             var deltaValue = move[3].set.value;
             var row = deltaValue.row;
             var col = deltaValue.col;
@@ -257,6 +261,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
             var rot = deltaValue.rot;
             var board = stateBeforeMove.board;
             var token = stateBeforeMove.token;
+            var t0 = stateBeforeMove.t0;
+            var t1 = stateBeforeMove.t1;
 
             // Init Board
             if(board === undefined || token === undefined){
@@ -284,6 +290,12 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
                 }
                 //Phase10
                 if(token[turnIndexBeforeMove][0] != row || token[turnIndexBeforeMove][1] != col){
+                    return false;
+                }
+
+                //random
+                if(id !== t0 && id !== t1){
+                    //console.log("id: " + id);
                     return false;
                 }
             }

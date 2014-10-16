@@ -10,7 +10,8 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       hexagon.init("canvas", 50);
       hexagon.drawHexGrid(8, 6, 50, 50, gameLogic.boardSize, false);
       //hexagon.drawPathTile(0, 0, 4, 0);
-      $scope.tid = 0;
+      $scope.tid = [0, 0];
+      $scope.tidIdx = 0;
       $scope.rot = 0;
 
       var color = ["#FF0000", "#00FF00"];
@@ -84,12 +85,12 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         }
         try{
             if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
-                $scope.tid = ($scope.tid+1)%gameLogic.tileNum;
+                $scope.tidIdx = ($scope.tidIdx+1)%2;
                 $scope.rot = 0;
                 var row = $scope.token[$scope.turnIndex][0];
                 var column = $scope.token[$scope.turnIndex][1];
                 var s = $scope.token[$scope.turnIndex][2];
-                hexagon.drawPathTileAtColRow(column, row, $scope.tid, $scope.rot);
+                hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
                 hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
             }
         } catch(e){
@@ -108,7 +109,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                 var row = $scope.token[$scope.turnIndex][0];
                 var column = $scope.token[$scope.turnIndex][1];
                 var s = $scope.token[$scope.turnIndex][2];
-                hexagon.drawPathTileAtColRow(column, row, $scope.tid, $scope.rot);
+                hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
                 hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
             }
         } catch(e){
@@ -126,6 +127,10 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         $scope.jsonState = angular.toJson(params.stateAfterMove, true);
         $scope.board = params.stateAfterMove.board;
         $scope.token = params.stateAfterMove.token;
+        $scope.tid[0] = params.stateAfterMove.t0;
+        $scope.tid[1] = params.stateAfterMove.t1;
+        $scope.tidIdx = 0;
+        console.log("tileid: " + $scope.tid[0] + " " + $scope.tid[1]);
 
         if($scope.board === undefined){
             var init = gameLogic.getInitialBoard();
@@ -172,7 +177,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
     $scope.makeMove = function () {
       var row = $scope.token[$scope.turnIndex][0];
       var column = $scope.token[$scope.turnIndex][1];
-      var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid, $scope.rot, $scope.turnIndex);
+      var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid[$scope.tidIdx], $scope.rot, $scope.turnIndex);
       $log.info(["Making move:", moveObj]);
       sendMakeMove(moveObj);
     };
