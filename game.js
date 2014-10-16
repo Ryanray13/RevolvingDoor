@@ -47,8 +47,10 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
           }
           try{
               if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] == -1){
+                  //console.log($event.pageX + "-" + $event.pageY);
+                  var trXY = scaleBodyService.reverse($event.pageX, $event.pageY);
 
-                  var tileSide = hexagon.getSelectedTileSide($event.pageX, $event.pageY);
+                  var tileSide = hexagon.getSelectedTileSide(trXY.x, trXY.y);
                   console.log(tileSide);
                   if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
                      var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
@@ -169,7 +171,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       exampleGame: gameLogic.getExampleGame(),
     };
 
-    //scaleBodyService.scaleBody({width: 1000, height: 1000});
+    scaleBodyService.scaleBody({width: 1000, height: 1000});
     var isLocalTesting = $window.parent === $window;
 
     $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]";

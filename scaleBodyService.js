@@ -6,6 +6,10 @@ angular.module('myApp.scaleBodyService', [])
     var body = doc.body;
     var gameSize = null;
 
+    var scale = 1;
+    var tx = 0;
+    var ty = 0;
+
     function scaleBody(_gameSize) {
       gameSize = _gameSize;
       rescale();
@@ -20,10 +24,13 @@ angular.module('myApp.scaleBodyService', [])
       var myGameHeight = gameSize.height;
       var scaleX = $window.innerWidth / myGameWidth;
       var scaleY = $window.innerHeight / myGameHeight;
-      var scale = Math.min(scaleX, scaleY);
-      var tx = (window.innerWidth / scale - myGameWidth) / 2;
-      var ty = (window.innerHeight / scale - myGameHeight) / 2;
+
+      scale = Math.min(scaleX, scaleY);
+      tx = (window.innerWidth / scale - myGameWidth) / 2;
+      ty = (window.innerHeight / scale - myGameHeight) / 2;
+
       var transformString = "scale(" + scale + "," + scale + ")  translate(" + tx + "px, " + ty + "px)";
+      //console.log("transformString: " + transformString);
       body.style['transform'] = transformString;
       body.style['-o-transform'] = transformString;
       body.style['-webkit-transform'] = transformString;
@@ -37,9 +44,20 @@ angular.module('myApp.scaleBodyService', [])
       body.style['-ms-transform-origin'] = transformOriginString;
     }
 
+    function reverse(x, y){
+        if(this)
+        x = x / scale;
+        y = y / scale;
+        x = x - tx;
+        y = y - ty;
+        //console.log("x: " + x + " " + "y: " + y);
+        return {x: x, y: y};
+    }
+
     $window.onresize = rescale;
     $window.onorientationchange = rescale;
     doc.addEventListener("orientationchange", rescale);
 
     this.scaleBody = scaleBody;
+    this.reverse = reverse;
   });
