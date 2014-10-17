@@ -6,7 +6,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       $window, $scope, $log,
       messageService, stateService, gameLogic, hexagon, scaleBodyService) {
 
-      $scope.mouseDown= function mouseDown($event) {
+      $scope.mouseDown= function ($event) {
           if(!$scope.isYourTurn){
               return;
           }
@@ -30,7 +30,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
           }
       };
 
-    $scope.selTile = function selTile() {
+    $scope.selTile = function () {
         console.log("selTile");
         if(!$scope.isYourTurn){
             console.log("not your turn");
@@ -52,7 +52,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         }
     };
 
-    $scope.turnTile = function turnTile() {
+    $scope.turnTile = function () {
         if(!$scope.isYourTurn){
             return;
         }
@@ -117,6 +117,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
             $scope.token = init.token;
         }
 
+        //draw path tile
         var rn = $scope.board.length;
         var cn = $scope.board[0].length;
         for(var r = 0; r < rn; r++){
@@ -130,6 +131,9 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
             }
         }
 
+        $scope.selTile();
+
+        //draw token
         for(var p = 0; p < 2; p++){
           if($scope.token[p][0] != -1){
               var row    = $scope.token[p][0];
@@ -137,6 +141,10 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
               var s      = $scope.token[p][2];
               hexagon.drawSelectedTileSide(column, row, s, color[p]);
           }
+        }
+
+        if($scope.token[$scope.turnIndex][0] != -1){
+            $scope.putToken = false;
         }
     }
 
@@ -147,6 +155,7 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
     $scope.tid = [0, 0];
     $scope.tidIdx = 0;
     $scope.rot = 0;
+    $scope.putToken = true;
 
     var color = ["#FF0000", "#00FF00"];
 
