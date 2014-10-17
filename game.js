@@ -64,6 +64,9 @@ app.controller('Ctrl', function (
                 var s = $scope.token[$scope.turnIndex][2];
                 hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
                 hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
+                if(row == $scope.token[1-$scope.turnIndex][0] && col == $scope.token[1-$scope.turnIndex][1]){
+                    hexagon.drawSelectedTileSide(column, row, $scope.token[1-$scope.turnIndex][2], color[1-$scope.turnIndex]);
+                }
             }
         } catch(e){
             $log.info(["Cell is already full in position:", row, col]);
