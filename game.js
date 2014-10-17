@@ -19,6 +19,8 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                   console.log(tileSide);
                   if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
                      var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
+                     $scope.isYourTurn = false;
+                     //console.log("isYorTurn:" + $scope.isYourTurn)
                      sendMakeMove(move);
                   }
               }
@@ -69,6 +71,32 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         }
     };
 
+    $scope.makeMove = function () {
+      if(!$scope.isYourTurn){
+          return;
+      }
+      try{
+        var row = $scope.token[$scope.turnIndex][0];
+        var column = $scope.token[$scope.turnIndex][1];
+        var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid[$scope.tidIdx], $scope.rot, $scope.turnIndex);
+        $log.info(["Making move:", moveObj]);
+        $scope.isYourTurn = false;
+        sendMakeMove(moveObj);
+      } catch(e){
+          $log.info(["Cell is already full in position:", row, col]);
+          return;
+      }
+    };
+
+    function sendMakeMove(move){
+        $log.info(["Making move:", move]);
+        if (isLocalTesting) {
+            stateService.makeMove(move);
+        } else {
+            messageService.sendMessage({makeMove: move});
+        }
+    };
+
     function updateUI(params) {
         $scope.isYourTurn = params.turnIndexAfterMove >= 0 && // game is ongoing
                             params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
@@ -111,23 +139,6 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
           }
         }
     }
-
-    $scope.makeMove = function () {
-      var row = $scope.token[$scope.turnIndex][0];
-      var column = $scope.token[$scope.turnIndex][1];
-      var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid[$scope.tidIdx], $scope.rot, $scope.turnIndex);
-      $log.info(["Making move:", moveObj]);
-      sendMakeMove(moveObj);
-    };
-
-    function sendMakeMove(move){
-        $log.info(["Making move:", move]);
-        if (isLocalTesting) {
-            stateService.makeMove(move);
-        } else {
-            messageService.sendMessage({makeMove: move});
-        }
-    };
 
 
     hexagon.init("canvas", 50);
