@@ -6,41 +6,6 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
       $window, $scope, $log,
       messageService, stateService, gameLogic, hexagon, scaleBodyService) {
 
-      var canvas = document.getElementById("canvas");
-      hexagon.init("canvas", 50);
-      hexagon.drawHexGrid(8, 6, 50, 50, gameLogic.boardSize, false);
-      //hexagon.drawPathTile(0, 0, 4, 0);
-      $scope.tid = [0, 0];
-      $scope.tidIdx = 0;
-      $scope.rot = 0;
-
-      var color = ["#FF0000", "#00FF00"];
-      /*
-      var prevTileSide = undefined;
-      $scope.mouseMove= function mouseMove($event) {
-          if(!$scope.isYourTurn){
-              return;
-          }
-          try{
-              if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] == -1){
-                  var tileSide = hexagon.getSelectedTileSide($event.pageX, $event.pageY);
-                  if(prevTileSide !== undefined){
-                      hexagon.drawHexAtColRow(prevTileSide.column, prevTileSide.row, "#000");
-                      prevTileSide = undefined;
-                  }
-                  if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
-                      //console.log("tileSide: " + tileSide.row + " " + tileSide.column);
-                      hexagon.drawSelectedTileSide(tileSide.column, tileSide.row, tileSide.side);
-                      prevTileSide = tileSide;
-                  }
-              }
-          } catch(e){
-              $log.info(["Cell is already full in position:", row, col]);
-              return;
-          }
-      };
-      */
-
       $scope.mouseDown= function mouseDown($event) {
           if(!$scope.isYourTurn){
               return;
@@ -56,22 +21,6 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
                      var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
                      sendMakeMove(move);
                   }
-              }
-              else{
-                  /*
-                  // offset coordinate
-                  var cord = hexagon.getSelectedTile($event.pageX, $event.pageY);
-                  console.log(cord);
-                  if((cord.row == 7 && cord.column == 0) || (cord.row == 0 && cord.column == 5)){
-                      $scope.turnTile();
-                  }
-                  else if((cord.row == 7 && cord.column == 1) || (cord.row == 0 && cord.column == 4)){
-                      $scope.selTile();
-                  }
-                  else if((cord.row == 6 && cord.column == 1) || (cord.row == 1 && cord.column == 4)){
-                      $scope.makeMove();
-                  }
-                  */
               }
           } catch(e){
               $log.info(["Cell is already full in position:", row, col]);
@@ -162,19 +111,6 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
           }
         }
     }
-    updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
-
-    var game = {
-      gameDeveloperEmail: "angieyayabird@gmail.com",
-      minNumberOfPlayers: 2,
-      maxNumberOfPlayers: 2,
-      exampleGame: gameLogic.getExampleGame(),
-    };
-
-    scaleBodyService.scaleBody({width: 1000, height: 1000});
-    var isLocalTesting = $window.parent === $window;
-
-    $scope.move = "[{setTurn: {turnIndex : 1}}, {set: {key: 'board', value: [[[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]], [[-1, -1],[-1, -1],[-1, -1]]]}}, {set: {key: 'token',     value: [[2,1,5], [-1,-1, -1]]}}, {set: {key: 'delta', value: {row: 2, col: 1, id: 0, rot: 5}}}]";
 
     $scope.makeMove = function () {
       var row = $scope.token[$scope.turnIndex][0];
@@ -192,6 +128,29 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
             messageService.sendMessage({makeMove: move});
         }
     };
+
+
+    hexagon.init("canvas", 50);
+    hexagon.drawHexGrid(8, 6, 50, 50, gameLogic.boardSize, false);
+
+    $scope.tid = [0, 0];
+    $scope.tidIdx = 0;
+    $scope.rot = 0;
+
+    var color = ["#FF0000", "#00FF00"];
+
+
+    updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
+
+    var game = {
+      gameDeveloperEmail: "angieyayabird@gmail.com",
+      minNumberOfPlayers: 2,
+      maxNumberOfPlayers: 2,
+      exampleGame: gameLogic.getExampleGame(),
+    };
+
+    scaleBodyService.scaleBody({width: 1000, height: 1000});
+    var isLocalTesting = $window.parent === $window;
 
     if (isLocalTesting) {
       game.isMoveOk = gameLogic.isMoveOk;

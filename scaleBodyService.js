@@ -45,7 +45,6 @@ angular.module('myApp.scaleBodyService', [])
     }
 
     function reverse(x, y){
-        if(this)
         x = x / scale;
         y = y / scale;
         x = x - tx;
