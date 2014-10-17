@@ -85,8 +85,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     var playerNum = 2;
     var tileNum = 5;
     function isEqual(object1, object2) {
-        //console.log(JSON.stringify(object1));
-        //console.log(JSON.stringify(object2));
+        console.log(JSON.stringify(object1));
+        console.log(JSON.stringify(object2));
         return JSON.stringify(object1) === JSON.stringify(object2);
     }
 
@@ -192,6 +192,27 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
                {setRandomInteger: {key: 't0', from: 0, to: 5}},
                {setRandomInteger: {key: 't1', from: 0, to: 5}}]; // 5 is not included
     }
+
+    function checkScore(board, token, row, col, id, rot){
+        board[row][col][0] = id;
+        board[row][col][1] = rot;
+
+        token= copyObject(token);
+
+        token = updateToken(board, token, 0);
+        token = updateToken(board, token, 1);
+
+        // Dead0: Check if tokens reach the edge of the board
+        var dead0 = isEdge(token[0][0], token[0][1], token[0][2]) && board[token[0][0]][token[0][1]][0]!=-1;
+        var dead1 = isEdge(token[1][0], token[1][1], token[1][2]) && board[token[1][0]][token[1][1]][0]!=-1;
+
+        //reverse
+        board[row][col][0] = -1;
+        board[row][col][1] = -1;
+
+        return [1-dead0, 1-dead1];
+    }
+
     /** Returns an array of {stateBeforeMove, move, comment}. */
     function getExampleMoves(initialTurnIndex, initialState, arrayOfRowColComment) {
         var exampleMoves = [];
@@ -309,6 +330,73 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
         }
         return true;
     }
+
+    function getRandom(from, to){
+        return Math.floor((to-from)*Math.random()) + from;
+    }
+
+    function createComputerMove(board, token, tid, turnIndex){
+        var row = token[turnIndex][0]; 
+        var col = token[turnIndex][1];
+        var rot = token[turnIndex][2];
+
+        if(row === -1){
+            var edgeLs = [];
+            for(var r = 0; r < boardSize; r += boardSize-1){
+                for(var c = 0; c < boardSize; c++){
+                    if(r != token[1-turnIndex][0] || c != token[1-turnIndex][1]){
+                        for(var e= 0; e< edgeNum; e++){
+                            if(isEdge(r, c, e)){
+                                edgeLs.push([r,c,e]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            for(var c = 0; c < boardSize; c += boardSize-1){
+                for(var r = 1; r < boardSize-1; r++){
+                    if(r != token[1-turnIndex][0] || c != token[1-turnIndex][1]){
+                        for(var e= 0; e< edgeNum; e++){
+                            if(isEdge(r, c, e)){
+                                edgeLs.push([r,c,e]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            var rand = getRandom(0, edgeLs.length);
+            row = edgeLs[rand][0];
+            col = edgeLs[rand][1];
+            rot = edgeLs[rand][2];
+            
+            return createMove(board, token, row, col, 0, rot, turnIndex);
+        }
+        else{
+            var id = 0;
+            var rot = 0;
+            var maxScore = -2;
+            for(var ti = 0; ti < tid.length; ti++){
+                for(var ri = 0; ri < edgeNum; ri++){
+                    /* self-dead: score -= 1
+                     * self-life: score += 1
+                     * opponent-dead: score += 1
+                     * opponent-life: score += 0
+                     */
+                    var scoreLs = checkScore(board, token, row, col, tid[ti], ri);
+                    var score = scoreLs[turnIndex]*2 - 1 + (1 - scoreLs[1-turnIndex]); 
+                    if(score > maxScore){
+                        id = tid[ti];
+                        rot = ri;
+                        maxScore = score;
+                    }
+                }
+            }
+            return createMove(board, token, row, col, id, rot, turnIndex);
+        }
+    }
+
     this.isMoveOk = isMoveOk;
     this.getExampleGame = getExampleGame;
     this.createMove = createMove;
@@ -316,4 +404,5 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     this.boardSize = boardSize;
     this.tileNum = tileNum;
     this.isEdge = isEdge;
+    this.createComputerMove = createComputerMove;
 });

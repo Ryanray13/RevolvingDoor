@@ -1,34 +1,34 @@
 'use strict';
 
 // TODO: remove stateService before launching the game.
-var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'platformApp', 'myApp.hexagon', 'myApp.scaleBodyService']);
-  app.controller('Ctrl', function (
-      $window, $scope, $log,
-      messageService, stateService, gameLogic, hexagon, scaleBodyService) {
+var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'myApp.hexagon', 'myApp.scaleBodyService']);
+app.controller('Ctrl', function (
+            $window, $scope, $log, $timeout,
+            messageService, stateService, gameLogic, hexagon, scaleBodyService) {
 
-      $scope.mouseDown= function ($event) {
-          if(!$scope.isYourTurn){
-              return;
-          }
-          try{
-              if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] == -1){
-                  //console.log($event.pageX + "-" + $event.pageY);
-                  var trXY = scaleBodyService.reverse($event.pageX, $event.pageY);
+    $scope.mouseDown= function ($event) {
+        if(!$scope.isYourTurn){
+            return;
+        }
+        try{
+            if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] == -1){
+                //console.log($event.pageX + "-" + $event.pageY);
+                var trXY = scaleBodyService.reverse($event.pageX, $event.pageY);
 
-                  var tileSide = hexagon.getSelectedTileSide(trXY.x, trXY.y);
-                  console.log(tileSide);
-                  if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
-                     var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
-                     $scope.isYourTurn = false;
-                     //console.log("isYorTurn:" + $scope.isYourTurn)
-                     sendMakeMove(move);
-                  }
-              }
-          } catch(e){
-              $log.info(["Cell is already full in position:", row, col]);
-              return;
-          }
-      };
+                var tileSide = hexagon.getSelectedTileSide(trXY.x, trXY.y);
+                console.log(tileSide);
+                if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
+                    var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
+                    $scope.isYourTurn = false;
+                    //console.log("isYorTurn:" + $scope.isYourTurn)
+                    sendMakeMove(move);
+                }
+            }
+        } catch(e){
+            $log.info(["Cell is already full in position:", row, col]);
+            return;
+        }
+    };
 
     $scope.selTile = function () {
         console.log("selTile");
@@ -72,20 +72,20 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
     };
 
     $scope.makeMove = function () {
-      if(!$scope.isYourTurn){
-          return;
-      }
-      try{
-        var row = $scope.token[$scope.turnIndex][0];
-        var column = $scope.token[$scope.turnIndex][1];
-        var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid[$scope.tidIdx], $scope.rot, $scope.turnIndex);
-        $log.info(["Making move:", moveObj]);
-        $scope.isYourTurn = false;
-        sendMakeMove(moveObj);
-      } catch(e){
-          $log.info(["Cell is already full in position:", row, col]);
-          return;
-      }
+        if(!$scope.isYourTurn){
+            return;
+        }
+        try{
+            var row = $scope.token[$scope.turnIndex][0];
+            var column = $scope.token[$scope.turnIndex][1];
+            var moveObj = gameLogic.createMove($scope.board, $scope.token, row, column, $scope.tid[$scope.tidIdx], $scope.rot, $scope.turnIndex);
+            $log.info(["Making move:", moveObj]);
+            $scope.isYourTurn = false;
+            sendMakeMove(moveObj);
+        } catch(e){
+            $log.info(["Cell is already full in position:", row, col]);
+            return;
+        }
     };
 
     function sendMakeMove(move){
@@ -97,9 +97,13 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
         }
     };
 
+    function sendComputerMove() {
+        sendMakeMove(gameLogic.createComputerMove($scope.board, $scope.token, $scope.tid, $scope.turnIndex));
+    }
+
     function updateUI(params) {
         $scope.isYourTurn = params.turnIndexAfterMove >= 0 && // game is ongoing
-                            params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
+            params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
         $scope.turnIndex = params.turnIndexAfterMove;
         console.log("updateUI " + $scope.turnIndex);
 
@@ -135,16 +139,22 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
 
         //draw token
         for(var p = 0; p < 2; p++){
-          if($scope.token[p][0] != -1){
-              var row    = $scope.token[p][0];
-              var column = $scope.token[p][1];
-              var s      = $scope.token[p][2];
-              hexagon.drawSelectedTileSide(column, row, s, color[p]);
-          }
+            if($scope.token[p][0] != -1){
+                var row    = $scope.token[p][0];
+                var column = $scope.token[p][1];
+                var s      = $scope.token[p][2];
+                hexagon.drawSelectedTileSide(column, row, s, color[p]);
+            }
         }
 
         if($scope.token[$scope.turnIndex][0] != -1){
             $scope.putToken = false;
+        }
+
+        //Is it the computer's turn?
+        if ($scope.isYourTurn && params.playersInfo[params.yourPlayerIndex].playerId === '') {
+            // Wait 500 milliseconds until animation ends.
+            $timeout(sendComputerMove, 500);
         }
     }
 
@@ -163,29 +173,29 @@ var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'p
     updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
 
     var game = {
-      gameDeveloperEmail: "angieyayabird@gmail.com",
-      minNumberOfPlayers: 2,
-      maxNumberOfPlayers: 2,
-      exampleGame: gameLogic.getExampleGame(),
+        gameDeveloperEmail: "angieyayabird@gmail.com",
+        minNumberOfPlayers: 2,
+        maxNumberOfPlayers: 2,
+        exampleGame: gameLogic.getExampleGame(),
     };
 
     scaleBodyService.scaleBody({width: 1000, height: 1000});
     var isLocalTesting = $window.parent === $window;
 
     if (isLocalTesting) {
-      game.isMoveOk = gameLogic.isMoveOk;
-      game.updateUI = updateUI;
-      stateService.setGame(game);
+        game.isMoveOk = gameLogic.isMoveOk;
+        game.updateUI = updateUI;
+        stateService.setGame(game);
     } else {
-      messageService.addMessageListener(function (message) {
-        if (message.isMoveOk !== undefined) {
-          var isMoveOkResult = gameLogic.isMoveOk(message.isMoveOk);
-          messageService.sendMessage({isMoveOkResult: isMoveOkResult});
-        } else if (message.updateUI !== undefined) {
-          updateUI(message.updateUI);
-        }
-      });
+        messageService.addMessageListener(function (message) {
+            if (message.isMoveOk !== undefined) {
+                var isMoveOkResult = gameLogic.isMoveOk(message.isMoveOk);
+                messageService.sendMessage({isMoveOkResult: isMoveOkResult});
+            } else if (message.updateUI !== undefined) {
+                updateUI(message.updateUI);
+            }
+        });
 
-      messageService.sendMessage({gameReady : game});
+        messageService.sendMessage({gameReady : game});
     }
-  });
+});
