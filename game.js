@@ -30,21 +30,30 @@ app.controller('Ctrl', function (
         }
     };
 
+    $scope.drawTile = function() {
+        if($scope.isYourTurn && $scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
+            var row = $scope.token[$scope.turnIndex][0];
+            var column = $scope.token[$scope.turnIndex][1];
+            var s = $scope.token[$scope.turnIndex][2];
+            hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
+            hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
+            if(row == $scope.token[1-$scope.turnIndex][0] && column == $scope.token[1-$scope.turnIndex][1]){
+                hexagon.drawSelectedTileSide(column, row, $scope.token[1-$scope.turnIndex][2], color[1-$scope.turnIndex]);
+            }
+        }
+    }
+
     $scope.selTile = function () {
-        console.log("selTile");
         if(!$scope.isYourTurn){
             console.log("not your turn");
             return;
         }
         try{
             if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
+                selAudio.play();
                 $scope.tidIdx = ($scope.tidIdx+1)%2;
                 $scope.rot = 0;
-                var row = $scope.token[$scope.turnIndex][0];
-                var column = $scope.token[$scope.turnIndex][1];
-                var s = $scope.token[$scope.turnIndex][2];
-                hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
-                hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
+                $scope.drawTile();
             }
         } catch(e){
             $log.info(["Cell is already full in position:", row, col]);
@@ -58,15 +67,9 @@ app.controller('Ctrl', function (
         }
         try{
             if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
+                rotAudio.play();
                 $scope.rot = ($scope.rot + 1)%hexagon.sideNum;
-                var row = $scope.token[$scope.turnIndex][0];
-                var column = $scope.token[$scope.turnIndex][1];
-                var s = $scope.token[$scope.turnIndex][2];
-                hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
-                hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
-                if(row == $scope.token[1-$scope.turnIndex][0] && col == $scope.token[1-$scope.turnIndex][1]){
-                    hexagon.drawSelectedTileSide(column, row, $scope.token[1-$scope.turnIndex][2], color[1-$scope.turnIndex]);
-                }
+                $scope.drawTile();
             }
         } catch(e){
             $log.info(["Cell is already full in position:", row, col]);
@@ -93,6 +96,7 @@ app.controller('Ctrl', function (
 
     function sendMakeMove(move){
         $log.info(["Making move:", move]);
+        moveAudio.play();
         if (isLocalTesting) {
             stateService.makeMove(move);
         } else {
@@ -138,7 +142,7 @@ app.controller('Ctrl', function (
             }
         }
 
-        $scope.selTile();
+        $scope.drawTile();
 
         //draw token
         for(var p = 0; p < 2; p++){
@@ -150,7 +154,7 @@ app.controller('Ctrl', function (
             }
         }
 
-        if($scope.token[$scope.turnIndex][0] != -1){
+        if($scope.turnIndex >= 0 && $scope.token[$scope.turnIndex][0] != -1){
             $scope.putToken = false;
         }
 
@@ -161,6 +165,15 @@ app.controller('Ctrl', function (
         }
     }
 
+
+    var moveAudio = new Audio('audio/click.wav');
+    moveAudio.load();
+
+    var rotAudio = new Audio('audio/rotate.wav');
+    rotAudio.load();
+
+    var selAudio = new Audio('audio/sel.wav');
+    selAudio.load();
 
     hexagon.init("canvas", 50);
     hexagon.drawHexGrid(8, 6, 50, 50, gameLogic.boardSize, false);
