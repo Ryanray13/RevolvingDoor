@@ -13,14 +13,15 @@
   <script src="messageService.js"></script>
   <script src="scaleBodyService.js"></script>
   <!-- for local testing purposes ! -->
-  <script src="http://yoav-zibin.github.io/emulator/platform.js"></script>
+  <script src="http://yoav-zibin.github.io/emulator/stateService.js"></script>
 </head>
 <body ng-controller="Ctrl" bgcolor= "#000000" width="700" height="800">
-    <canvas id="canvas"  ng-mousedown="mouseDown($event)" width="700" height="800"></canvas>
+    <canvas id="canvas"  ng-mousedown="mouseDown($event)" width="500" height="600"></canvas>
     <br>
-    <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = false> </img>
-    <img id="turn" ng-click ="turnTile()" src="turn.png" width="70" height="70" ng-hide = false> </img>
-    <img id="ok" ng-click ="makeMove()" src="ok.png" width="70" height="70" ng-hide = false> </img>
+    <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = "putToken"> </img>
+    <img id="turn"   ng-click ="turnTile()" src="turn.png"   width="70" height="70" ng-hide = "putToken"> </img>
+    <img id="ok"     ng-click ="makeMove()" src="ok.png"     width="70" height="70" ng-hide = "putToken"> </img>
+    <h1 ng-show= "putToken" class="ng-hide"> <font color="red">Put a token by touching an edge </font></h1>
 
     <!--
   <textarea ng-model="jsonState" rows=10 cols=100 readonly></textarea>

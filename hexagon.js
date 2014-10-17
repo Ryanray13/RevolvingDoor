@@ -325,6 +325,20 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
     };
     
+    this.drawColorPathAtColRow = function (column, row, s0, s1, c) {
+        var cord = axialToOffset(row, column);
+        row = cord.row;
+        column = cord.column;
+        var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
+        var drawx = (column * side) + canvasOriginX;
+
+        if(c!== undefined){
+            context.strokeStyle = c;
+        }
+        drawPath(drawx, drawy, s0, s1);
+        context.strokeStyle = this.color;
+    };
+
     function drawPath(x0, y0, s0, s1) {
         //console.log("drawPath");
         var sidePt = [];
