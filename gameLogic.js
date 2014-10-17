@@ -85,8 +85,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     var playerNum = 2;
     var tileNum = 5;
     function isEqual(object1, object2) {
-        console.log(JSON.stringify(object1));
-        console.log(JSON.stringify(object2));
+        //console.log(JSON.stringify(object1));
+        //console.log(JSON.stringify(object2));
         return JSON.stringify(object1) === JSON.stringify(object2);
     }
 
@@ -120,8 +120,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
         var id = board[row][col][0];
         var rot = board[row][col][1];
         if(id != -1){
-            console.log("update token: " + tokenId);
-            console.log(token[tokenId]);
+            //console.log("update token: " + tokenId);
+            //console.log(token[tokenId]);
             edg = (tile[id][(edg+rot)%edgeNum]+edgeNum-rot)%edgeNum;
             if(isEdge(row, col, edg)){
                 token[tokenId][2] = edg;
@@ -140,6 +140,41 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
             return token;
         }
     }
+
+    function getTokenPath(board, token, tokenId, path){
+        var row = token[tokenId][0];
+        var col = token[tokenId][1];
+        var edg = token[tokenId][2];
+        var id = board[row][col][0];
+        var rot = board[row][col][1];
+        if(id != -1){
+            var prevEdg = edg;
+            edg = (tile[id][(edg+rot)%edgeNum]+edgeNum-rot)%edgeNum;
+            if(isEdge(row, col, edg)){
+
+                path.push({row: row, col: col, s0: prevEdg, s1: edg});
+                console.log("push: " + path.length);
+                
+                token[tokenId][2] = edg;
+                //token dead
+                return path;
+            }
+            else{
+                path.push({row: row, col: col, s0: prevEdg, s1: edg});
+                console.log("push: " + path.length);
+                
+                token[tokenId][0] = row + dir[edg][0];
+                token[tokenId][1] = col + dir[edg][1];
+                token[tokenId][2] = opposite[edg];
+                
+                return getTokenPath(board, token, tokenId, path);
+            }
+        }
+        else{
+            return path;
+        }
+    }
+
     function getInitialBoard(){
         var board = new Array(boardSize);
         for(var i = 0; i < boardSize; i++){
@@ -405,4 +440,5 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     this.tileNum = tileNum;
     this.isEdge = isEdge;
     this.createComputerMove = createComputerMove;
+    this.getTokenPath = getTokenPath;
 });

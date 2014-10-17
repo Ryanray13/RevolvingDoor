@@ -120,6 +120,7 @@ app.controller('Ctrl', function (
         $scope.tid[0] = params.stateAfterMove.t0;
         $scope.tid[1] = params.stateAfterMove.t1;
         $scope.tidIdx = 0;
+        $scope.delta = params.stateAfterMove.delta;
         console.log("tileid: " + $scope.tid[0] + " " + $scope.tid[1]);
 
         if($scope.board === undefined){
@@ -129,20 +130,41 @@ app.controller('Ctrl', function (
         }
 
         //draw path tile
-        var rn = $scope.board.length;
-        var cn = $scope.board[0].length;
-        for(var r = 0; r < rn; r++){
-            for(var c = 0; c < cn; c++){
-                if($scope.board[r][c][0] !== -1){
-                    var tid = $scope.board[r][c][0];
-                    var rot = $scope.board[r][c][1];
-                    console.log("drawing");
-                    hexagon.drawPathTileAtColRow(c, r, tid, rot);
+        //var rn = $scope.board.length;
+        //var cn = $scope.board[0].length;
+        //for(var r = 0; r < rn; r++){
+        //    for(var c = 0; c < cn; c++){
+        if($scope.delta !== undefined){
+            var r = $scope.delta.row;
+            var c = $scope.delta.col;
+            if($scope.board[r][c][0] !== -1){
+                var tid = $scope.board[r][c][0];
+                var rot = $scope.board[r][c][1];
+                //console.log("drawing");
+                hexagon.drawPathTileAtColRow(c, r, tid, rot);
+            }
+        }
+        //    }
+        //}
+
+        $scope.drawTile();
+
+        //draw path
+        if(params.stateBeforeMove !== undefined && params.stateBeforeMove !== null){
+            var prevToken = params.stateBeforeMove.token;
+            for(var p = 0; p < 2; p++){
+                if(prevToken !== undefined && prevToken[p][0] != -1){
+                    var path = [];
+                    path = gameLogic.getTokenPath($scope.board, prevToken, p, path);
+                    //console.log("path len: " + path.length);
+                    for(var pi = 0; pi < path.length; pi++){
+                        var piece = path[pi];
+                        hexagon.drawColorPathAtColRow(piece.col, piece.row, piece.s0, piece.s1, color[p]);
+                    }
                 }
             }
         }
 
-        $scope.drawTile();
 
         //draw token
         for(var p = 0; p < 2; p++){
