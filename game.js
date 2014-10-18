@@ -189,7 +189,7 @@ app.controller('Ctrl', function (
     }
 
 
-    var moveAudio = new Audio('audio/click.wav');
+    var moveAudio = new Audio('audio/move.wav');
     moveAudio.load();
 
     var rotAudio = new Audio('audio/rotate.wav');

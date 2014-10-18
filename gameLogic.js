@@ -153,8 +153,6 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
             if(isEdge(row, col, edg)){
 
                 path.push({row: row, col: col, s0: prevEdg, s1: edg});
-                console.log("push: " + path.length);
-                
                 token[tokenId][2] = edg;
                 //token dead
                 return path;
