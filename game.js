@@ -114,6 +114,9 @@ app.controller('Ctrl', function (
         $scope.turnIndex = params.turnIndexAfterMove;
         console.log("updateUI " + $scope.turnIndex);
 
+        $scope.endMatchScores = params.endMatchScores;
+
+
         $scope.jsonState = angular.toJson(params.stateAfterMove, true);
         $scope.board = params.stateAfterMove.board;
         $scope.token = params.stateAfterMove.token;
@@ -129,11 +132,6 @@ app.controller('Ctrl', function (
             $scope.token = init.token;
         }
 
-        //draw path tile
-        //var rn = $scope.board.length;
-        //var cn = $scope.board[0].length;
-        //for(var r = 0; r < rn; r++){
-        //    for(var c = 0; c < cn; c++){
         if($scope.delta !== undefined){
             var r = $scope.delta.row;
             var c = $scope.delta.col;
@@ -144,8 +142,6 @@ app.controller('Ctrl', function (
                 hexagon.drawPathTileAtColRow(c, r, tid, rot);
             }
         }
-        //    }
-        //}
 
         $scope.drawTile();
 
@@ -166,14 +162,24 @@ app.controller('Ctrl', function (
         }
 
 
+        console.log("endMatchScores:" + $scope.endMatchScores);
         //draw token
         for(var p = 0; p < 2; p++){
             if($scope.token[p][0] != -1){
                 var row    = $scope.token[p][0];
                 var column = $scope.token[p][1];
                 var s      = $scope.token[p][2];
-                hexagon.drawSelectedTileSide(column, row, s, color[p]);
+                if($scope.endMatchScores != undefined && $scope.endMatchScores[p] == 0){
+                    // draw dead token here
+                }
+                else{
+                    hexagon.drawSelectedTileSide(column, row, s, color[p]);
+                }
             }
+        }
+
+        if($scope.endMatchScores != undefined){
+            deadAudio.play();
         }
 
         if($scope.turnIndex >= 0 && $scope.token[$scope.turnIndex][0] != -1){
@@ -197,6 +203,9 @@ app.controller('Ctrl', function (
 
     var selAudio = new Audio('audio/sel.wav');
     selAudio.load();
+
+    var deadAudio = new Audio('audio/dead.wav');
+    deadAudio.load();
 
     hexagon.init("canvas", 50);
     hexagon.drawHexGrid(8, 6, 50, 50, gameLogic.boardSize, false);
