@@ -39,7 +39,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
 
     var sideNum;
 
-    this.init = function init(canvasId, r) {
+    function init(canvasId, r) {
         radius = r;
     
         height = Math.sqrt(3) * radius;
@@ -66,7 +66,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     };
 
     
-    this.drawHexGrid = function drawHexGrid(rows, cols, originX, originY, boardSize ,isDebug) {
+    function drawHexGrid(rows, cols, originX, originY, boardSize ,isDebug) {
         canvasOriginX = originX;
         canvasOriginY = originY;
         
@@ -114,7 +114,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var drawy = column % 2 == 0 ? (row * height) + canvasOriginY : (row * height) + canvasOriginY + (height / 2);
         var drawx = (column * side) + canvasOriginX;
         return { x: drawx, y: drawy };
-    }
+    };
 
     function drawSelectedTileSide(column, row, s, c){
 
@@ -167,9 +167,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
 
         /*
         */
-
-    }
-    this.drawSelectedTileSide = drawSelectedTileSide;
+    };
 
     function getSelectedTileSide(mouseX, mouseY){
         var obj = getSelectedTile(mouseX, mouseY);
@@ -230,8 +228,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var cord = offsetToAxial(row, column);
 
         return  { row: cord.row, column: cord.column, side: s };
-    }
-    this.getSelectedTileSide = getSelectedTileSide;
+    };
+
 
     function drawHexAtColRow(column, row, color) {
 
@@ -245,11 +243,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         drawHex(drawx, drawy, color, "");
     };
 
-    this.drawHexAtColRow = drawHexAtColRow;
 
-
-
-    this.drawPathTileAtColRow = function drawPathTileAtColRow(column, row, tid, rot) {
+    function drawPathTileAtColRow(column, row, tid, rot) {
         var cord = axialToOffset(row, column);
         row = cord.row;
         column = cord.column;
@@ -287,10 +282,8 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         context.beginPath();
         context.arc(sidePt[s][0],sidePt[s][1], radius/4, 0, 2*Math.PI);
         context.stroke();
+    };
 
-    }
-    this.drawPathTileSide = drawPathTileSide;
-    
     function drawHex(x0, y0, fillColor, debugText) {
     
         /* 
@@ -417,8 +410,6 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         }
     
     };
-    this.drawPathTile = drawPathTile;
-    
     
     //Recusivly step up to the body to calculate canvas offset.
     function getRelativeCanvasOffset() {
@@ -432,7 +423,7 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
             
             return { x: x, y: y };
         }
-    }
+    };
     
     //Uses a grid overlay algorithm to determine hexagon location
     //Left edge of grid has a test to acuratly determin correct hex
@@ -508,8 +499,6 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
     
         return  { row: row, column: column };
     };
-
-    this.getSelectedTile = getSelectedTile;
     
     function sign(p1, p2, p3) {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
@@ -547,13 +536,23 @@ angular.module('myApp.hexagon', []).service('hexagon', function(){
         var orow = arow + (acol - (acol&1))/2;
         return {row:orow, column:ocol};
     };
-    this.axialToOffset = axialToOffset;
     
     function offsetToAxial(orow, ocol) {
         var acol = ocol;
         var arow = orow - (ocol - (ocol&1))/2;
         return {row:arow, column:acol};
     };
+
+    this.init = init;
+    this.drawHexGrid = drawHexGrid;
+    this.drawSelectedTileSide = drawSelectedTileSide;
+    this.getSelectedTileSide = getSelectedTileSide;
+    this.drawHexAtColRow = drawHexAtColRow;
+    this.drawPathTileAtColRow = drawPathTileAtColRow;
+    this.drawPathTileSide = drawPathTileSide;
+    this.drawPathTile = drawPathTile;
+    this.getSelectedTile = getSelectedTile;
+    this.axialToOffset = axialToOffset;
     this.offsetToAxial = offsetToAxial;
 
 });
