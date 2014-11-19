@@ -29,8 +29,11 @@
     		<polygon style="fill:rgb(0,0,0);stroke-width:5;stroke:rgb(255,255,0)" ng-attr-points="{{currTile.points}}"></polygon>
 	    	<path ng-repeat="path in currTile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:5"/>
     	</g>
-    	<g class="token" ng-repeat="token in tokenLs" ng-attr-transform="translate({{token.tx}},{{token.ty}})">
-    		<circle ng-attr-cx="{{token.pt[0]}}" cy="{{token.pt[1]}}" r="15" stroke="black" stroke-width="0" fill="lime" />
+    	<g class="token" ng-show="tokenLs[0]" ng-attr-transform="translate({{tokenLs[0].tx}},{{tokenLs[0].ty}})">
+    		<circle ng-attr-cx="{{tokenLs[0].pt[0]}}" cy="{{tokenLs[0].pt[1]}}" r="15" stroke="black" stroke-width="0" fill="lime" />
+    	</g>
+    	<g class="token" ng-show="tokenLs[1]" ng-attr-transform="translate({{tokenLs[1].tx}},{{tokenLs[1].ty}})">
+    		<circle ng-attr-cx="{{tokenLs[1].pt[0]}}" cy="{{tokenLs[1].pt[1]}}" r="15" stroke="black" stroke-width="0" fill="purple" />
     	</g>
     </svg>
     <br/>

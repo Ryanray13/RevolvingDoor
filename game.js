@@ -170,6 +170,7 @@ app.controller('Ctrl', function (
                 var s      = $scope.token[p][2];
                 if($scope.endMatchScores != undefined && $scope.endMatchScores[p] == 0){
                     // draw dead token here
+                    $scope.tokenLs[p] = hexagon2.genToken(row, column, s);
                 }
                 else{
                     hexagon.drawSelectedTileSide(column, row, s, color[p]);
