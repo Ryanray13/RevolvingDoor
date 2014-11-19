@@ -10,13 +10,29 @@
   <script src="game.js"></script>
   <script src="gameLogic.js"></script>
   <script src="hexagon.js"></script>
+  <script src="hexagon2.js"></script>
   <script src="messageService.js"></script>
   <script src="scaleBodyService.js"></script>
   <!-- for local testing purposes ! -->
   <script src="http://yoav-zibin.github.io/emulator/stateService.js"></script>
 </head>
-<body ng-controller="Ctrl" bgcolor= "#000000" width="700" height="800">
-    <canvas id="canvas"  ng-mousedown="mouseDown($event)" width="500" height="600"></canvas>
+<body ng-controller="Ctrl" bgcolor= "#FFFFFFFF" width="700" height="800">
+    <svg id = "svg" width="600" height="700">
+    	<g class="tile" ng-repeat="tile in tileLs" ng-attr-transform="translate({{tile.tx}},{{tile.ty}})">
+    	<polygon style="fill:rgb(0,0,0);stroke-width:5;stroke:rgb(255,255,0)" ng-attr-points="{{tile.points}}"></polygon>
+    	<polygon ng-show="putToken" ng-repeat="edge in tile.edgeLs" ng-click="mouseClick(tile.r, tile.c, edge.s)" style="fill:rgb(255,0,0);stroke-width:0;stroke:rgb(255,0,0)" ng-attr-points="{{edge.points}}"></polygon>
+    	<path ng-repeat="path in tile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:5"/>
+    	</g>
+    	<g class="token" ng-repeat="token in tokenLs" ng-attr-transform="translate({{token.tx}},{{token.ty}})">
+    		<circle ng-attr-cx="{{token.pt[0]}}" cy="{{token.pt[1]}}" r="15" stroke="black" stroke-width="0" fill="lime" />
+    	</g>
+    	<g class="tileCurr" ng-attr-transform="translate({{currTile.tx}},{{currTile.ty}})">
+    		<polygon style="fill:rgb(0,0,0);stroke-width:5;stroke:rgb(255,255,0)" ng-attr-points="{{currTile.points}}"></polygon>
+	    	<path ng-repeat="path in currTile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:5"/>
+    	</g>
+    </svg>
+    <br/>
+    <canvas ng-show=false id="canvas"  ng-mousedown="mouseDown($event)" width="500" height="600"></canvas>
     <br>
     <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = "putToken"> </img>
     <img id="turn"   ng-click ="turnTile()" src="turn.png"   width="70" height="70" ng-hide = "putToken"> </img>

@@ -1,24 +1,20 @@
 'use strict';
 
 // TODO: remove stateService before launching the game.
-var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'myApp.hexagon', 'myApp.scaleBodyService']);
+var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'myApp.hexagon', 'myApp.hexagon2', 'myApp.scaleBodyService']);
 app.controller('Ctrl', function (
             $window, $scope, $log, $timeout,
-            messageService, stateService, gameLogic, hexagon, scaleBodyService) {
-
-    $scope.mouseDown= function ($event) {
+            messageService, stateService, gameLogic, hexagon, hexagon2, scaleBodyService) {
+	
+	$scope.mouseClick = function(r, c, s){
+		console.log("Clicked " + r + " " + c + " " + s);
         if(!$scope.isYourTurn){
             return;
         }
         try{
             if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] == -1){
-                //console.log($event.pageX + "-" + $event.pageY);
-                var trXY = scaleBodyService.reverse($event.pageX, $event.pageY);
-
-                var tileSide = hexagon.getSelectedTileSide(trXY.x, trXY.y);
-                console.log(tileSide);
-                if(gameLogic.isEdge(tileSide.row, tileSide.column, tileSide.side)){
-                    var move = gameLogic.createMove($scope.board, $scope.token, tileSide.row, tileSide.column, 0, tileSide.side, $scope.turnIndex);
+                if(gameLogic.isEdge(r, c, s)){
+                    var move = gameLogic.createMove($scope.board, $scope.token, r, c, 0, s, $scope.turnIndex);
                     $scope.isYourTurn = false;
                     //console.log("isYorTurn:" + $scope.isYourTurn)
                     sendMakeMove(move);
@@ -28,7 +24,7 @@ app.controller('Ctrl', function (
             $log.info(["Cell is already full in position:", row, col]);
             return;
         }
-    };
+	};
 
     $scope.drawTile = function() {
         if($scope.isYourTurn && $scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
@@ -40,6 +36,8 @@ app.controller('Ctrl', function (
             if(row == $scope.token[1-$scope.turnIndex][0] && column == $scope.token[1-$scope.turnIndex][1]){
                 hexagon.drawSelectedTileSide(column, row, $scope.token[1-$scope.turnIndex][2], color[1-$scope.turnIndex]);
             }
+            $scope.currTile = hexagon2.genTile(row, column);
+            hexagon2.drawPathTile($scope.currTile, $scope.tid[$scope.tidIdx], $scope.rot);
         }
     }
 
@@ -174,6 +172,7 @@ app.controller('Ctrl', function (
                 }
                 else{
                     hexagon.drawSelectedTileSide(column, row, s, color[p]);
+                    $scope.tokenLs[p] = hexagon2.genToken(row, column, s);
                 }
             }
         }
@@ -246,4 +245,9 @@ app.controller('Ctrl', function (
 
         messageService.sendMessage({gameReady : game});
     }
+
+	hexagon2.init(100, 100, 60);
+	$scope.tileLs = hexagon2.genTileLs(gameLogic.getInitialBoard().board);
+	$scope.tokenLs = [];
+  $scope.currTile;
 });
