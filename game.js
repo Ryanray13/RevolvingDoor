@@ -138,6 +138,7 @@ app.controller('Ctrl', function (
                 var rot = $scope.board[r][c][1];
                 //console.log("drawing");
                 hexagon.drawPathTileAtColRow(c, r, tid, rot);
+                hexagon2.drawPathTile($scope.tileLs[r][c], tid, rot);
             }
         }
 

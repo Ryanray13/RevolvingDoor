@@ -71,22 +71,18 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
 
 	function genTileLs(board){
 		var tileLs = [];
-		for(var c = 0; c < board[0].length; c++){
-		  for(var r = 0; r < board.length; r++){
+		for(var r = 0; r < board.length; r++){
+			tileLs.push([]);
+			for(var c = 0; c < board[0].length; c++){
 				var tile = genTile(r, c);
-
 				for(var s = 0; s < sideNum; s++){
 					if(gameLogic.isEdge(r, c, s)){
 						var pointLs = [vertex[s], vertex[(s+1)%sideNum], center];
-						var edge = {
-								points: pointLsToStr(pointLs),
-								s: s
-						}
+						var edge = { points: pointLsToStr(pointLs), s: s };
 						tile.edgeLs.push(edge);
 					}
 				}
-
-				tileLs.push(tile);
+				tileLs[r].push(tile);
 			}
 		}
 		return tileLs;
