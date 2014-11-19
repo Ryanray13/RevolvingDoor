@@ -154,6 +154,7 @@ app.controller('Ctrl', function (
                     //console.log("path len: " + path.length);
                     for(var pi = 0; pi < path.length; pi++){
                         var piece = path[pi];
+                        $scope.pathLs[p].push(hexagon2.drawPath(piece.row, piece.col, piece.s0, piece.s1));
                         hexagon.drawColorPathAtColRow(piece.col, piece.row, piece.s0, piece.s1, color[p]);
                     }
                 }
@@ -251,5 +252,6 @@ app.controller('Ctrl', function (
 	hexagon2.init(100, 100, 60);
 	$scope.tileLs = hexagon2.genTileLs(gameLogic.getInitialBoard().board);
 	$scope.tokenLs = [];
+	$scope.pathLs = [[],[]];
   $scope.currTile;
 });

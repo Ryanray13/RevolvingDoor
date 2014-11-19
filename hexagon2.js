@@ -95,7 +95,7 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
       var se = tile[tid][i];
       ss = (ss + sideNum - rot) % sideNum;
       se = (se + sideNum - rot) % sideNum;
-  	  t.pathLs.push(drawPath(ss, se));
+  	  t.pathLs.push(drawPath(t.r, t.c, ss, se));
     }
     return t;
   }
@@ -104,7 +104,7 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
     return "M"+sidePt[path.ss][0]+","+sidePt[path.ss][1]+" A"+path.r+","+path.r+" 0 0,1 "+sidePt[path.se][0]+","+sidePt[path.se][1];
   }
   
-  function drawPath(s0, s1){
+  function drawPath(r, c, s0, s1){
 
     var diff = Math.abs(s1 - s0);
     if(diff == 1 || diff == 5){
@@ -140,7 +140,6 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
         		arc: [1/3*Math.PI*ve, 2/3*Math.PI + 1/3*Math.PI*ve]
         }
         path.str = pathToStr(path);
-        return path;
     }
     else if(diff == 2 || diff == 4){
         // Draw an arc with 2/3 radius
@@ -174,7 +173,6 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
         		arc: [1/3*Math.PI*ve, 1/3*Math.PI*ve + 1/3*Math.PI]
         }
         path.str = pathToStr(path);
-        return path;
     }
     else if(diff == 3){
         //Draw a line
@@ -196,8 +194,12 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
         		se: se,
         }
         path.str = "M" + sidePt[path.ss][0]+","+sidePt[path.ss][1]+" L"+sidePt[path.se][0]+","+sidePt[path.se][1];
-        return path;
     }
+    path.r = r;
+    path.c = c;
+  	path.tx = OriginX + c*side;
+  	path.ty = OriginY + c*height/2 + height*r;
+   return path;
   }
   
   function genToken(r, c, s){
@@ -217,4 +219,5 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
 	this.genTileLs = genTileLs;
 	this.drawPathTile = drawPathTile;
 	this.genToken = genToken;
+	this.drawPath = drawPath;
 });
