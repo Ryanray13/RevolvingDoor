@@ -20,14 +20,14 @@
     <svg id = "svg" width="600" height="700">
     	<g class="tile" ng-repeat="tileRow in tileLs">
     		<g class="tile" ng-repeat="tile in tileRow" ng-attr-transform="translate({{tile.tx}},{{tile.ty}})">
-    		<polygon style="fill:rgb(0,0,0);stroke-width:5;stroke:rgb(255,255,0)" ng-attr-points="{{tile.points}}"></polygon>
-    		<polygon ng-show="putToken" ng-repeat="edge in tile.edgeLs" ng-click="mouseClick(tile.r, tile.c, edge.s)" style="fill:rgb(255,0,0);stroke-width:0;stroke:rgb(255,0,0)" ng-attr-points="{{edge.points}}"></polygon>
-    		<path ng-repeat="path in tile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:5"/>
+    		<polygon style="fill:rgb(0,0,0);stroke-width:3;stroke:rgb(255,255,0)" ng-attr-points="{{tile.points}}"></polygon>
+    		<polygon ng-show="putToken" ng-repeat="edge in tile.edgeLs" ng-click="mouseClick(tile.r, tile.c, edge.s)" style="fill-opacity:0;fill:rgb(255,0,0);stroke-width:0;stroke:rgb(255,0,0)" ng-attr-points="{{edge.points}}"></polygon>
+    		<path ng-repeat="path in tile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:3"/>
     		</g>
     	</g>
     	<g class="tileCurr" ng-attr-transform="translate({{currTile.tx}},{{currTile.ty}})">
-    		<polygon style="fill:rgb(0,0,0);stroke-width:5;stroke:rgb(255,255,0)" ng-attr-points="{{currTile.points}}"></polygon>
-	    	<path ng-repeat="path in currTile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:5"/>
+    		<polygon style="fill:rgb(0,0,0);stroke-width:3;stroke:rgb(255,255,0)" ng-attr-points="{{currTile.points}}"></polygon>
+	    	<path ng-repeat="path in currTile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:3"/>
     	</g>
     	<g class="path" ng-show="pathLs[0].length">
     		<path ng-repeat="path in pathLs[0]" ng-attr-transform="translate({{path.tx}},{{path.ty}})" ng-attr-d="{{path.str}}" style="stroke:lime; fill:none; stroke-width:5"/>
@@ -42,8 +42,6 @@
     		<circle ng-attr-cx="{{tokenLs[1].pt[0]}}" cy="{{tokenLs[1].pt[1]}}" r="15" stroke="black" stroke-width="0" fill="purple" />
     	</g>
     </svg>
-    <br/>
-    <canvas ng-show=false id="canvas"  ng-mousedown="mouseDown($event)" width="500" height="600"></canvas>
     <br>
     <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = "putToken"> </img>
     <img id="turn"   ng-click ="turnTile()" src="turn.png"   width="70" height="70" ng-hide = "putToken"> </img>

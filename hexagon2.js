@@ -11,7 +11,7 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
   var vertex;
   var points;
   var tile;
-  var sideNum;
+  var sideNum = 6;
   var sidePt;
 
   function init(x, y, r){
@@ -220,4 +220,5 @@ angular.module('myApp.hexagon2', ['myApp.gameLogic']).service('hexagon2', functi
 	this.drawPathTile = drawPathTile;
 	this.genToken = genToken;
 	this.drawPath = drawPath;
+	this.sideNum = sideNum;
 });

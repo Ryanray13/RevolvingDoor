@@ -1,10 +1,10 @@
 'use strict';
 
 // TODO: remove stateService before launching the game.
-var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'myApp.hexagon', 'myApp.hexagon2', 'myApp.scaleBodyService']);
+var app = angular.module('myApp', ['myApp.messageService', 'myApp.gameLogic', 'myApp.hexagon2', 'myApp.scaleBodyService']);
 app.controller('Ctrl', function (
             $window, $scope, $log, $timeout,
-            messageService, stateService, gameLogic, hexagon, hexagon2, scaleBodyService) {
+            messageService, stateService, gameLogic, hexagon2, scaleBodyService) {
 	
 	$scope.mouseClick = function(r, c, s){
 		console.log("Clicked " + r + " " + c + " " + s);
@@ -31,11 +31,6 @@ app.controller('Ctrl', function (
             var row = $scope.token[$scope.turnIndex][0];
             var column = $scope.token[$scope.turnIndex][1];
             var s = $scope.token[$scope.turnIndex][2];
-            hexagon.drawPathTileAtColRow(column, row, $scope.tid[$scope.tidIdx], $scope.rot);
-            hexagon.drawSelectedTileSide(column, row, s, color[$scope.turnIndex]);
-            if(row == $scope.token[1-$scope.turnIndex][0] && column == $scope.token[1-$scope.turnIndex][1]){
-                hexagon.drawSelectedTileSide(column, row, $scope.token[1-$scope.turnIndex][2], color[1-$scope.turnIndex]);
-            }
             $scope.currTile = hexagon2.genTile(row, column);
             hexagon2.drawPathTile($scope.currTile, $scope.tid[$scope.tidIdx], $scope.rot);
         }
@@ -66,7 +61,7 @@ app.controller('Ctrl', function (
         try{
             if($scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
                 rotAudio.play();
-                $scope.rot = ($scope.rot + 1)%hexagon.sideNum;
+                $scope.rot = ($scope.rot + 1)%hexagon2.sideNum;
                 $scope.drawTile();
             }
         } catch(e){
@@ -136,8 +131,6 @@ app.controller('Ctrl', function (
             if($scope.board[r][c][0] !== -1){
                 var tid = $scope.board[r][c][0];
                 var rot = $scope.board[r][c][1];
-                //console.log("drawing");
-                hexagon.drawPathTileAtColRow(c, r, tid, rot);
                 hexagon2.drawPathTile($scope.tileLs[r][c], tid, rot);
             }
         }
@@ -155,7 +148,6 @@ app.controller('Ctrl', function (
                     for(var pi = 0; pi < path.length; pi++){
                         var piece = path[pi];
                         $scope.pathLs[p].push(hexagon2.drawPath(piece.row, piece.col, piece.s0, piece.s1));
-                        hexagon.drawColorPathAtColRow(piece.col, piece.row, piece.s0, piece.s1, color[p]);
                     }
                 }
             }
@@ -174,7 +166,6 @@ app.controller('Ctrl', function (
                     $scope.tokenLs[p] = hexagon2.genToken(row, column, s);
                 }
                 else{
-                    hexagon.drawSelectedTileSide(column, row, s, color[p]);
                     $scope.tokenLs[p] = hexagon2.genToken(row, column, s);
                 }
             }
@@ -208,9 +199,6 @@ app.controller('Ctrl', function (
 
     var deadAudio = new Audio('audio/dead.wav');
     deadAudio.load();
-
-    hexagon.init("canvas", 50);
-    hexagon.drawHexGrid(8, 6, 50, 50, gameLogic.boardSize, false);
 
     $scope.tid = [0, 0];
     $scope.tidIdx = 0;
