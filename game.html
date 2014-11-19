@@ -6,7 +6,7 @@
   <title>RevolvingDoor</title>
   <meta name="description" content="RevolvingDoor game">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="components/angular/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
   <script src="game.js"></script>
   <script src="gameLogic.js"></script>
   <script src="hexagon.js"></script>
@@ -16,7 +16,8 @@
   <!-- for local testing purposes ! -->
   <script src="http://yoav-zibin.github.io/emulator/stateService.js"></script>
 </head>
-<body ng-controller="Ctrl" bgcolor= "#FFFFFFFF" width="700" height="800">
+<body ng-controller="Ctrl" bgcolor= "#000000" width="600" height="800">
+    <div align="center">
     <svg id = "svg" width="600" height="700">
     	<g class="tile" ng-repeat="tileRow in tileLs">
     		<g class="tile" ng-repeat="tile in tileRow" ng-attr-transform="translate({{tile.tx}},{{tile.ty}})">
@@ -42,11 +43,12 @@
     		<circle ng-attr-cx="{{tokenLs[1].pt[0]}}" cy="{{tokenLs[1].pt[1]}}" r="15" stroke="black" stroke-width="0" fill="purple" />
     	</g>
     </svg>
-    <br>
+    <br/>
     <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = "putToken"> </img>
     <img id="turn"   ng-click ="turnTile()" src="turn.png"   width="70" height="70" ng-hide = "putToken"> </img>
     <img id="ok"     ng-click ="makeMove()" src="ok.png"     width="70" height="70" ng-hide = "putToken"> </img>
     <h1 ng-show= "putToken" class="ng-hide"> <font color="red">Put a token by touching an edge </font></h1>
+    </div>
 
     <!--
   <textarea ng-model="jsonState" rows=10 cols=100 readonly></textarea>

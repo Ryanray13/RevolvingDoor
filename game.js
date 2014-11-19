@@ -217,7 +217,7 @@ app.controller('Ctrl', function (
         exampleGame: gameLogic.getExampleGame(),
     };
 
-    scaleBodyService.scaleBody({width: 1000, height: 1000});
+    scaleBodyService.scaleBody({width: 600, height: 800});
     var isLocalTesting = $window.parent === $window;
 
     if (isLocalTesting) {
