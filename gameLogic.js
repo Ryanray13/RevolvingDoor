@@ -87,7 +87,8 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     function isEqual(object1, object2) {
         //console.log(JSON.stringify(object1));
         //console.log(JSON.stringify(object2));
-        return JSON.stringify(object1) === JSON.stringify(object2);
+        //return JSON.stringify(object1) === JSON.stringify(object2);
+        return angular.equals(object1, object2);
     }
 
     function copyObject(object) {
