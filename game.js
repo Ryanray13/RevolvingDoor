@@ -217,7 +217,7 @@ app.controller('Ctrl', function (
         exampleGame: gameLogic.getExampleGame(),
     };
 
-    scaleBodyService.scaleBody({width: 420, height: 600});
+    scaleBodyService.scaleBody({width: 420, height: 700});
     var isLocalTesting = $window.parent === $window;
 
     if (isLocalTesting) {
@@ -237,7 +237,7 @@ app.controller('Ctrl', function (
         messageService.sendMessage({gameReady : game});
     }
 
-	hexagon2.init(10, 10, 60);
+	hexagon2.init(20, 20, 60);
 	$scope.tileLs = hexagon2.genTileLs(gameLogic.getInitialBoard().board);
 	$scope.tokenLs = [];
 	$scope.pathLs = [[],[]];
