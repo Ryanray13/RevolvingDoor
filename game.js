@@ -124,15 +124,16 @@ app.controller('Ctrl', function (
             $scope.board = init.board;
             $scope.token = init.token;
         }
-
-        if($scope.delta !== undefined){
-            var r = $scope.delta.row;
-            var c = $scope.delta.col;
-            if($scope.board[r][c][0] !== -1){
-                var tid = $scope.board[r][c][0];
-                var rot = $scope.board[r][c][1];
-                hexagon2.drawPathTile($scope.tileLs[r][c], tid, rot);
-            }
+        else{
+        	for(var r = 0; r < $scope.board.length; r++){
+        		for(var c = 0; c < $scope.board[0].length; c++){
+              if($scope.board[r][c][0] !== -1){
+                  var tid = $scope.board[r][c][0];
+                  var rot = $scope.board[r][c][1];
+                  hexagon2.drawPathTile($scope.tileLs[r][c], tid, rot);
+              }
+        		}
+        	}
         }
 
         $scope.drawTile();
@@ -145,6 +146,7 @@ app.controller('Ctrl', function (
                     var path = [];
                     path = gameLogic.getTokenPath($scope.board, prevToken, p, path);
                     //console.log("path len: " + path.length);
+                    $scope.pathLs[p] = [];
                     for(var pi = 0; pi < path.length; pi++){
                         var piece = path[pi];
                         $scope.pathLs[p].push(hexagon2.drawPath(piece.row, piece.col, piece.s0, piece.s1));

@@ -143,6 +143,34 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
     }
 
     function getTokenPath(board, token, tokenId, path){
+      var row = token[tokenId][0];
+      var col = token[tokenId][1];
+      var edg = token[tokenId][2];
+      getPrevTokenPath(board, row, col, edg, path);
+    	getCurrTokenPath(board, token, tokenId, path);
+    	return path;
+    }
+
+    function getPrevTokenPath(board, row, col, edg, path){
+        if(isEdge(row, col, edg)){
+        	return path;
+        }
+        else{
+            row = row + dir[edg][0];
+            col = col + dir[edg][1];
+            edg = opposite[edg];
+
+            var id = board[row][col][0];
+            var rot = board[row][col][1];
+            var prevEdg = edg;
+            edg = (tile[id][(edg+rot)%edgeNum]+edgeNum-rot)%edgeNum;
+            path.push({row: row, col: col, s0: prevEdg, s1: edg});
+            return getPrevTokenPath(board, row, col, edg, path);
+        }
+
+    }
+
+    function getCurrTokenPath(board, token, tokenId, path){
         var row = token[tokenId][0];
         var col = token[tokenId][1];
         var edg = token[tokenId][2];
@@ -166,7 +194,7 @@ angular.module('myApp.gameLogic', []).service('gameLogic', function(){
                 token[tokenId][1] = col + dir[edg][1];
                 token[tokenId][2] = opposite[edg];
                 
-                return getTokenPath(board, token, tokenId, path);
+                return getCurrTokenPath(board, token, tokenId, path);
             }
         }
         else{
