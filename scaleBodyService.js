@@ -30,7 +30,9 @@ angular.module('myApp.scaleBodyService', [])
       ty = (window.innerHeight / scale - myGameHeight) / 2;
 
       var transformString = "scale(" + scale + "," + scale + ")  translate(" + tx + "px, " + ty + "px)";
-      //console.log("transformString: " + transformString);
+      //console.log("windowSize: " + "(" + $window.innerWidth + "," + $window,innerHeight + ")");
+      //console.log("gameSize: " + "(" + myGameWidth + "," + myGameHeight + ")");
+      //console.log(" transformString: " + transformString);
       body.style['transform'] = transformString;
       body.style['-o-transform'] = transformString;
       body.style['-webkit-transform'] = transformString;
