@@ -29,7 +29,7 @@ angular.module('myApp.scaleBodyService', [])
       tx = (window.innerWidth / scale - myGameWidth) / 2;
       ty = (window.innerHeight / scale - myGameHeight) / 2;
 
-      var transformString = "scale(" + scale + "," + scale + ")  translate(" + tx + "px, " + ty + "px)";
+      var transformString = "scale(" + scale + "," + scale + ")";  //translate(" + tx + "px, " + ty + "px)";
       //console.log("windowSize: " + "(" + $window.innerWidth + "," + $window,innerHeight + ")");
       //console.log("gameSize: " + "(" + myGameWidth + "," + myGameHeight + ")");
       //console.log(" transformString: " + transformString);
