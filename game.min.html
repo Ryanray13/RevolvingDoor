@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<!-- build:[manifest] game.appcache -->
-<html lang="en" ng-app="myApp">
-<!-- /build -->
+<html lang="en" ng-app="myApp" manifest="game.appcache">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,22 +7,13 @@
   <meta name="description" content="RevolvingDoor game">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <!-- build:js http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
-  <!-- /build -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
   
-  <!-- build:js dist/everything.min.js -->
   <script src="gameLogic.js"></script>
   <script src="game.js"></script>
   <script src="hexagon.js"></script>
-  <!-- /build -->
   
-  <!-- build:js http://yoav-zibin.github.io/emulator/dist/gameServices.min.js -->
-  <script src="http://yoav-zibin.github.io/emulator/resizeGameAreaService.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/gameService.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/messageService.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/stateService.js"></script>
-  <!-- /build -->
+  <script src="http://yoav-zibin.github.io/emulator/dist/gameServices.min.js"></script>
   
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
 </head>
