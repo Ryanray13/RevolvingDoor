@@ -669,7 +669,7 @@ angular.module('myApp', []).factory('gameLogic', function () {
         return svg.clientWidth / 14;
     };
 
-    hexagon.init(20, 15, 60);
+    hexagon.init(40, 15, 60);
     $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
     $scope.tokenLs = [];
     $scope.pathLs = [[],[]];
