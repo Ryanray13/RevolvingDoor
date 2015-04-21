@@ -482,10 +482,10 @@ angular.module('myApp', []).factory('gameLogic', function () {
 
     'use strict';
 
-    resizeGameAreaService.setWidthToHeight(0.833);
-	
-	  $scope.mouseClick = function(r, c, s){
-		  console.log("Clicked " + r + " " + c + " " + s);
+    resizeGameAreaService.setWidthToHeight(0.8);
+
+      $scope.mouseClick = function(r, c, s){
+          console.log("Clicked " + r + " " + c + " " + s);
         if(!$scope.isYourTurn){
             return;
         }
@@ -502,7 +502,7 @@ angular.module('myApp', []).factory('gameLogic', function () {
             $log.info(["Cell is already full in position:", $scope.token[$scope.turnIndex][0], $scope.token[$scope.turnIndex][1]]);
             return;
         }
-	  };
+      };
 
     $scope.drawTile = function() {
         if($scope.isYourTurn && $scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
@@ -596,15 +596,15 @@ angular.module('myApp', []).factory('gameLogic', function () {
             $scope.token = init.token;
         }
         else{
-        	for(var r = 0; r < $scope.board.length; r++){
-        		for(var c = 0; c < $scope.board[0].length; c++){
+            for(var r = 0; r < $scope.board.length; r++){
+                for(var c = 0; c < $scope.board[0].length; c++){
               if($scope.board[r][c][0] !== -1){
                   var tid = $scope.board[r][c][0];
                   var rot = $scope.board[r][c][1];
                   hexagon.drawPathTile($scope.tileLs[r][c], tid, rot);
               }
-        		}
-        	}
+                }
+            }
         }
 
         $scope.drawTile();
@@ -635,7 +635,7 @@ angular.module('myApp', []).factory('gameLogic', function () {
                 var row    = $scope.token[p][0];
                 var column = $scope.token[p][1];
                 var s      = $scope.token[p][2];
-                if($scope.endMatchScores !== undefined && $scope.endMatchScores[p] === 0){
+                if($scope.endMatchScores !== undefined && $scope.endMatchScores !== null && $scope.endMatchScores[p] === 0){
                     // draw dead token here
                     $scope.tokenLs[p] = hexagon.genToken(row, column, s);
                 }
@@ -661,13 +661,18 @@ angular.module('myApp', []).factory('gameLogic', function () {
     $scope.tidIdx = 0;
     $scope.rot = 0;
     $scope.putToken = true;
-
+    
     //var color = ["#FF0000", "#00FF00"];
+    var svg = document.getElementById("svg");
+    
+    $scope.getFontSize = function () {   
+        return svg.clientWidth / 14;
+    };
 
-	  hexagon.init(20, 20, 60);
-	  $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
-	  $scope.tokenLs = [];
-	  $scope.pathLs = [[],[]];
+    hexagon.init(20, 10, 60);
+    $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
+    $scope.tokenLs = [];
+    $scope.pathLs = [[],[]];
 
     updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
 
@@ -679,4 +684,222 @@ angular.module('myApp', []).factory('gameLogic', function () {
       isMoveOk: gameLogic.isMoveOk,
       updateUI: updateUI
     });
+}]);
+;angular.module('myApp').factory('hexagon',
+  ["gameLogic", function (gameLogic) {
+  'use strict';
+	var OriginX;
+	var OriginY;
+
+  var radius;
+  var height;
+  var width;
+  var side;
+  var center;
+  var vertex;
+  var points;
+  var tile;
+  var sideNum = 6;
+  var sidePt;
+
+  function init(x, y, r){
+  	OriginX = x;
+  	OriginY = y;
+    radius = r;
+    height = Math.sqrt(3) * radius;
+    width = 2 * radius;
+    side = 3 / 2 * radius;
+    sideNum = 6;
+
+		center = [width/2, height/2];
+    vertex = [];
+		vertex[0] = [0, height / 2];                //0
+		vertex[1] = [width - side, 0];                //1
+		vertex[2] = [side, 0];                        //2
+		vertex[3] = [width, height / 2];            //3
+		vertex[4] = [side, height];                   //4
+		vertex[5] = [width - side, height];           //5
+
+		sidePt = [];
+    for(var i = 0; i < sideNum; i++){
+      sidePt[i] = [(vertex[i][0] + vertex[(i+1)%sideNum][0])/2, (vertex[i][1] + vertex[(i+1)%sideNum][1])/2];
+    }
+
+		points = pointLsToStr(vertex);
+
+    tile = [[1,0,3,2,5,4],
+            [1,0,4,5,2,3],
+            [1,0,5,4,3,2],
+            [2,4,0,5,1,3],
+            [3,4,5,0,1,2]];
+  }
+  
+  function pointLsToStr(pointLs){
+  	var str = "";
+		for(var i = 0; i < pointLs.length; i++){
+			if(i > 0) {
+				str = str + " ";
+      }
+			str = str + pointLs[i][0]+","+pointLs[i][1];
+		}
+		return str;
+  }
+
+	function genTile(r, c){
+		var tile = { 
+				r: r,
+				c: c,
+  			tx: OriginX + c*side,
+  			ty: OriginY + c*height/2 + height*r,
+				pathLs: [],
+				edgeLs: [],
+				points: points
+		};
+		return tile;
+	}
+
+	function genTileLs(board){
+		var tileLs = [];
+		for(var r = 0; r < board.length; r++){
+			tileLs.push([]);
+			for(var c = 0; c < board[0].length; c++){
+				var tile = genTile(r, c);
+				for(var s = 0; s < sideNum; s++){
+					if(gameLogic.isEdge(r, c, s)){
+						var pointLs = [vertex[s], vertex[(s+1)%sideNum], center];
+						var edge = { points: pointLsToStr(pointLs), s: s };
+						tile.edgeLs.push(edge);
+					}
+				}
+				tileLs[r].push(tile);
+			}
+		}
+		return tileLs;
+	}
+	
+  function drawPathTile(t, tid, rot) {
+    //console.log("drawPathTile");
+    for(var i = 0; i < sideNum; i++){
+      var ss = i;
+      var se = tile[tid][i];
+      ss = (ss + sideNum - rot) % sideNum;
+      se = (se + sideNum - rot) % sideNum;
+  	  t.pathLs.push(drawPath(t.r, t.c, ss, se));
+    }
+    return t;
+  }
+  
+  function pathToStr(path){
+    return "M"+sidePt[path.ss][0]+","+sidePt[path.ss][1]+" A"+path.r+","+path.r+" 0 0,1 "+sidePt[path.se][0]+","+sidePt[path.se][1];
+  }
+  
+  function drawPath(r, c, s0, s1){
+
+    var diff = Math.abs(s1 - s0);
+    var vs, ve, ss, se, path;
+    if(diff === 1 || diff === 5){
+        // Draw an arc with half radius
+        if((s0 + 1)%sideNum === s1){
+            vs = s1;
+            ve = s0;
+        } else {
+            vs = s0;
+            ve = s1;
+        }
+        //context.beginPath();
+        //context.arc(vertex[vs][0],vertex[vs][1], radius/2, 1/3*Math.PI*ve, 2/3*Math.PI + 1/3*Math.PI*ve);
+        //context.stroke();
+
+        /*
+         * start: 30,0
+         *   end: 0,51.96
+         * radius: 30,30
+         Example:
+        	<path d="M30,0
+            A30,30 0 0,1 0,51.96"
+         style="stroke:#FFFFFF; fill:none; stroke-width:5"/>
+        */
+        path = {
+        		ss: vs,
+        		se: ve,
+        		ctr: vertex[vs],
+        		r: radius/2,
+        		arc: [1/3*Math.PI*ve, 2/3*Math.PI + 1/3*Math.PI*ve]
+        };
+        path.str = pathToStr(path);
+    } else if (diff === 2 || diff === 4) {
+        // Draw an arc with 2/3 radius
+        if((s0 + 2)%sideNum === s1){
+            vs = s0;
+            ve = (vs+1)%sideNum;
+            ss = s1;
+            se = s0;
+        } else {
+            vs = s1;
+            ve = (vs+1)%sideNum;
+            ss = s0;
+            se = s1;
+        }
+        var cx = vertex[ve][0] + vertex[ve][0] - vertex[vs][0];
+        var cy = vertex[ve][1] + vertex[ve][1] - vertex[vs][1];
+
+        //context.beginPath();
+        //context.arc(cx,cy, radius*3/2, 1/3*Math.PI*ve, 1/3*Math.PI*ve + 1/3*Math.PI);
+        //context.stroke();
+        path = {
+        		ss: ss,
+        		se: se,
+        		ctr: [cx,cy],
+        		r: radius*3/2,
+        		arc: [1/3*Math.PI*ve, 1/3*Math.PI*ve + 1/3*Math.PI]
+        };
+        path.str = pathToStr(path);
+    } else if(diff === 3) {
+        //Draw a line
+        //context.moveTo(sidePt[s0][0], sidePt[s0][1]); 
+        //context.lineTo(sidePt[s1][0], sidePt[s1][1]); 
+        //context.stroke();
+    	  if(s0 < s1){
+    	  	ss = s0;
+    	  	se = s1;
+    	  } else {
+    	  	ss = s1;
+    	  	se = s0;
+    	  }
+        path = {
+        		ss: ss,
+        		se: se,
+        };
+        path.str = "M" + sidePt[path.ss][0]+","+sidePt[path.ss][1]+" L"+sidePt[path.se][0]+","+sidePt[path.se][1];
+    }
+    path.r = r;
+    path.c = c;
+  	path.tx = OriginX + c*side;
+  	path.ty = OriginY + c*height/2 + height*r;
+   return path;
+  }
+  
+  function genToken(r, c, s){
+  	var token = {
+  			r: r,
+  			c: c,
+  			s: s,
+  			tx: OriginX + c*side,
+  			ty: OriginY + c*height/2 + height*r,
+  			pt: sidePt[s],
+  	};
+  	return token;
+  }
+
+	
+  return {
+    init : init,
+    genTile : genTile,
+    genTileLs : genTileLs,
+    drawPathTile : drawPathTile,
+    genToken : genToken,
+    drawPath : drawPath,
+    sideNum : sideNum
+  };
+
 }]);

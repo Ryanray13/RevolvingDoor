@@ -9,9 +9,7 @@
   
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
   
-  <script src="gameLogic.js"></script>
-  <script src="game.js"></script>
-  <script src="hexagon.js"></script>
+  <script src="dist/everything.min.js"></script>
   
   <script src="http://yoav-zibin.github.io/emulator/dist/gameServices.min.js"></script>
   
@@ -19,38 +17,36 @@
 </head>
 <body ng-controller="Ctrl" bgcolor= "#000000">
 <div id="gameArea">
-    <div align="center">
-    <svg id = "svg" width="420" height="600">
-    	<g class="tile" ng-repeat="tileRow in tileLs">
-    		<g class="tile" ng-repeat="tile in tileRow" ng-attr-transform="translate({{tile.tx}},{{tile.ty}})">
-    		<polygon style="fill:rgb(0,0,0);stroke-width:3;stroke:rgb(255,255,0)" ng-attr-points="{{tile.points}}"></polygon>
+    <svg id = "svg" style="position:absolute;" viewBox="0 0 470 600"  width="100%" height="89%" >
+    	<g class="tile" ng-repeat="tileRow in tileLs" style="position:absolute;" >
+    		<g class="tile" ng-repeat="tile in tileRow" ng-attr-transform="translate({{tile.tx}},{{tile.ty}})" style="position:absolute;">
+    		<polygon style="fill:rgb(0,0,0);stroke-width:0.5%;stroke:rgb(255,255,0)" ng-attr-points="{{tile.points}}"></polygon>
     		<polygon ng-show="putToken" ng-repeat="edge in tile.edgeLs" ng-click="mouseClick(tile.r, tile.c, edge.s)" style="fill-opacity:0;fill:rgb(255,0,0);stroke-width:0;stroke:rgb(255,0,0)" ng-attr-points="{{edge.points}}"></polygon>
-    		<path ng-repeat="path in tile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:3"/>
+    		<path ng-repeat="path in tile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:0.5%"/>
     		</g>
     	</g>
     	<g class="tileCurr" ng-attr-transform="translate({{currTile.tx}},{{currTile.ty}})">
-    		<polygon style="fill:rgb(0,0,0);stroke-width:3;stroke:rgb(255,255,0)" ng-attr-points="{{currTile.points}}"></polygon>
-	    	<path ng-repeat="path in currTile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:3"/>
+    		<polygon style="fill:rgb(0,0,0);stroke-width:0.5%;stroke:rgb(255,255,0)" ng-attr-points="{{currTile.points}}"></polygon>
+	    	<path ng-repeat="path in currTile.pathLs" ng-attr-d="{{path.str}}" style="stroke:#FFFFFF; fill:none; stroke-width:0.5%"/>
     	</g>
     	<g class="path" ng-show="pathLs[0].length">
-    		<path ng-repeat="path in pathLs[0]" ng-attr-transform="translate({{path.tx}},{{path.ty}})" ng-attr-d="{{path.str}}" style="stroke:lime; fill:none; stroke-width:5"/>
+    		<path ng-repeat="path in pathLs[0]" ng-attr-transform="translate({{path.tx}},{{path.ty}})" ng-attr-d="{{path.str}}" style="stroke:lime; fill:none; stroke-width:0.8%"/>
     	</g>
     	<g class="path" ng-show="pathLs[1].length">
-    		<path ng-repeat="path in pathLs[1]" ng-attr-transform="translate({{path.tx}},{{path.ty}})" ng-attr-d="{{path.str}}" style="stroke:purple; fill:none; stroke-width:5"/>
+    		<path ng-repeat="path in pathLs[1]" ng-attr-transform="translate({{path.tx}},{{path.ty}})" ng-attr-d="{{path.str}}" style="stroke:purple; fill:none; stroke-width:0.8%"/>
     	</g>
     	<g class="token" ng-show="tokenLs[0]" ng-attr-transform="translate({{tokenLs[0].tx}},{{tokenLs[0].ty}})">
-    		<circle ng-attr-cx="{{tokenLs[0].pt[0]}}" cy="{{tokenLs[0].pt[1]}}" r="15" stroke="black" stroke-width="0" fill="lime" />
+    		<circle ng-attr-cx="{{tokenLs[0].pt[0]}}" cy="{{tokenLs[0].pt[1]}}" r="2.5%" stroke="black" stroke-width="0" fill="lime" />
     	</g>
     	<g class="token" ng-show="tokenLs[1]" ng-attr-transform="translate({{tokenLs[1].tx}},{{tokenLs[1].ty}})">
-    		<circle ng-attr-cx="{{tokenLs[1].pt[0]}}" cy="{{tokenLs[1].pt[1]}}" r="15" stroke="black" stroke-width="0" fill="purple" />
+    		<circle ng-attr-cx="{{tokenLs[1].pt[0]}}" cy="{{tokenLs[1].pt[1]}}" r="2.5%" stroke="black" stroke-width="0" fill="purple" />
     	</g>
     </svg>
     <br/>
-    <img id="switch" ng-click ="selTile()"  src="switch.png" width="70" height="70" ng-hide = "putToken"> </img>
-    <img id="turn"   ng-click ="turnTile()" src="turn.png"   width="70" height="70" ng-hide = "putToken"> </img>
-    <img id="ok"     ng-click ="makeMove()" src="ok.png"     width="70" height="70" ng-hide = "putToken"> </img>
-    <h1 ng-show= "putToken" class="ng-hide"> <font color="red">Put a token by touching an edge </font></h1>
-    </div>
+    <img id="switch" ng-click ="selTile()"  src="switch.png" style="position:absolute;left:20%;bottom:0%;width:12.5%;height:10%" ng-hide = "putToken"> </img>
+    <img id="turn"   ng-click ="turnTile()" src="turn.png"   style="position:absolute;left:40%;bottom:0%;width:12.5%;height:10%"  ng-hide = "putToken"> </img>
+    <img id="ok"     ng-click ="makeMove()" src="ok.png"     style="position:absolute;left:60%;bottom:0%;width:12.5%;height:10%" ng-hide = "putToken"> </img>
+    <div ng-show= "putToken" class="ng-hide"  style="position:absolute;color:red;left:0%;bottom:0%;width:100%;height:8%;font-size:{{getFontSize()}}px"> Put a token by touching an edge </div>
 
     <!--
   <textarea ng-model="jsonState" rows=10 cols=100 readonly></textarea>

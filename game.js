@@ -8,10 +8,10 @@ angular.module('myApp')
 
     'use strict';
 
-    resizeGameAreaService.setWidthToHeight(0.833);
-	
-	  $scope.mouseClick = function(r, c, s){
-		  console.log("Clicked " + r + " " + c + " " + s);
+    resizeGameAreaService.setWidthToHeight(0.8);
+
+      $scope.mouseClick = function(r, c, s){
+          console.log("Clicked " + r + " " + c + " " + s);
         if(!$scope.isYourTurn){
             return;
         }
@@ -28,7 +28,7 @@ angular.module('myApp')
             $log.info(["Cell is already full in position:", $scope.token[$scope.turnIndex][0], $scope.token[$scope.turnIndex][1]]);
             return;
         }
-	  };
+      };
 
     $scope.drawTile = function() {
         if($scope.isYourTurn && $scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
@@ -122,15 +122,15 @@ angular.module('myApp')
             $scope.token = init.token;
         }
         else{
-        	for(var r = 0; r < $scope.board.length; r++){
-        		for(var c = 0; c < $scope.board[0].length; c++){
+            for(var r = 0; r < $scope.board.length; r++){
+                for(var c = 0; c < $scope.board[0].length; c++){
               if($scope.board[r][c][0] !== -1){
                   var tid = $scope.board[r][c][0];
                   var rot = $scope.board[r][c][1];
                   hexagon.drawPathTile($scope.tileLs[r][c], tid, rot);
               }
-        		}
-        	}
+                }
+            }
         }
 
         $scope.drawTile();
@@ -161,7 +161,7 @@ angular.module('myApp')
                 var row    = $scope.token[p][0];
                 var column = $scope.token[p][1];
                 var s      = $scope.token[p][2];
-                if($scope.endMatchScores !== undefined && $scope.endMatchScores[p] === 0){
+                if($scope.endMatchScores !== undefined && $scope.endMatchScores !== null && $scope.endMatchScores[p] === 0){
                     // draw dead token here
                     $scope.tokenLs[p] = hexagon.genToken(row, column, s);
                 }
@@ -187,13 +187,18 @@ angular.module('myApp')
     $scope.tidIdx = 0;
     $scope.rot = 0;
     $scope.putToken = true;
-
+    
     //var color = ["#FF0000", "#00FF00"];
+    var svg = document.getElementById("svg");
+    
+    $scope.getFontSize = function () {   
+        return svg.clientWidth / 14;
+    };
 
-	  hexagon.init(20, 20, 60);
-	  $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
-	  $scope.tokenLs = [];
-	  $scope.pathLs = [[],[]];
+    hexagon.init(20, 10, 60);
+    $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
+    $scope.tokenLs = [];
+    $scope.pathLs = [[],[]];
 
     updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
 

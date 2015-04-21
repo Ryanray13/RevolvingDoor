@@ -20,7 +20,7 @@
 describe("In RevolvingLogic ", function() {
   var RevolvingLogic;
 
-  beforeEach(module("myApp.gameLogic"));
+  beforeEach(module("myApp"));
 
   beforeEach(inject(function (gameLogic) {
     RevolvingLogic = gameLogic;

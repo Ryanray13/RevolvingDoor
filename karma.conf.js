@@ -5,11 +5,10 @@ module.exports = function(config){
     basePath : './',
 
     files : [
-      'components/angular/angular.js',
-      'components/angular-route/angular-route.js',
-      'components/angular-resource/angular-resource.js',
-      'components/angular-mocks/angular-mocks.js',
-      '*.js'
+      'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js',
+      'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-mocks.js',
+      'gameLogic.js',
+      'gameLogic_test.js'
     ],
 
     reporters: ['progress', 'coverage'],
@@ -35,16 +34,9 @@ module.exports = function(config){
 
     plugins : [
             'karma-chrome-launcher',
-            'karma-firefox-launcher',
             'karma-jasmine',
             'karma-coverage',
-            'karma-junit-reporter'
             ],
-
-    junitReporter : {
-      outputFile: 'test_out/unit.xml',
-      suite: 'unit'
-    }
 
   });
 };
