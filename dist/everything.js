@@ -1,4 +1,4 @@
-angular.module('myApp', []).factory('gameLogic', function () {
+angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', function () {
 
     'use strict';
 
@@ -484,8 +484,8 @@ angular.module('myApp', []).factory('gameLogic', function () {
 
     resizeGameAreaService.setWidthToHeight(0.8);
 
-      $scope.mouseClick = function(r, c, s){
-          console.log("Clicked " + r + " " + c + " " + s);
+    $scope.mouseClick = function(r, c, s){
+        console.log("Clicked " + r + " " + c + " " + s);
         if(!$scope.isYourTurn){
             return;
         }
@@ -502,7 +502,7 @@ angular.module('myApp', []).factory('gameLogic', function () {
             $log.info(["Cell is already full in position:", $scope.token[$scope.turnIndex][0], $scope.token[$scope.turnIndex][1]]);
             return;
         }
-      };
+    };
 
     $scope.drawTile = function() {
         if($scope.isYourTurn && $scope.token !== undefined && $scope.token[$scope.turnIndex][0] !== -1){
@@ -666,7 +666,7 @@ angular.module('myApp', []).factory('gameLogic', function () {
     var svg = document.getElementById("svg");
     
     $scope.getFontSize = function () {   
-        return svg.clientWidth / 14;
+        return svg.clientWidth / 15;
     };
 
     hexagon.init(40, 15, 60);
