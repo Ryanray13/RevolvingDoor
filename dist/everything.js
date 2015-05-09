@@ -92,7 +92,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
     }
 
     function copyObject(object) {
-        return JSON.parse(JSON.stringify(object));
+        return angular.copy(object);
     }
 
     // check if token's location is at the edge of board
@@ -203,18 +203,18 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
     }
 
     function getInitialBoard(){
-        var board = new Array(boardSize);
+        var board = [];
         var i,j;
         for(i = 0; i < boardSize; i++){
-            board[i] = new Array(boardSize);
+            board[i] = [];
             for(j = 0; j < boardSize; j++){
                 board[i][j] = [-1,-1];
             }
         }
 
-        var token = new Array(playerNum);
+        var token = [];
         for(i = 0; i < playerNum; i++){
-            token[i] = new Array(3);
+            token[i] = [];
             for(j = 0; j < 3; j++){
                 token[i][j] = -1;
             }
@@ -473,10 +473,10 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
     };
 });
 ;angular.module('myApp')
-  .controller('Ctrl', ['$scope', '$log', '$timeout',
+  .controller('Ctrl', ['$rootScope', '$scope', '$log', '$timeout',
     'gameService', 'stateService', 'gameLogic', 'hexagon', 
     'resizeGameAreaService', 
-    function ($scope, $log, $timeout,
+    function ($rootScope, $scope, $log, $timeout,
       gameService, stateService, gameLogic, hexagon, 
       resizeGameAreaService) {
 
@@ -484,6 +484,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
 
     resizeGameAreaService.setWidthToHeight(0.8);
 
+    $rootScope.isHelpModalShown = false;
     $scope.mouseClick = function(r, c, s){
         console.log("Clicked " + r + " " + c + " " + s);
         if(!$scope.isYourTurn){
@@ -592,21 +593,30 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
 
         if($scope.board === undefined){
             var init = gameLogic.getInitialBoard();
+            $scope.isHelpModalShown = false;
             $scope.board = init.board;
             $scope.token = init.token;
+            $scope.tileLs = hexagon.genTileLs(init.board);
+            $scope.tokenLs = [];
+            $scope.pathLs = [[],[]];
+            $scope.tid = [0, 0];
+            $scope.tidIdx = 0;
+            $scope.rot = 0;
+            $scope.putToken = true;
+            $scope.currTile = null;
         }
         else{
             for(var r = 0; r < $scope.board.length; r++){
                 for(var c = 0; c < $scope.board[0].length; c++){
-              if($scope.board[r][c][0] !== -1){
-                  var tid = $scope.board[r][c][0];
-                  var rot = $scope.board[r][c][1];
-                  hexagon.drawPathTile($scope.tileLs[r][c], tid, rot);
-              }
+                    if($scope.board[r][c][0] !== -1){
+                        var tid = $scope.board[r][c][0];
+                        var rot = $scope.board[r][c][1];
+                        hexagon.drawPathTile($scope.tileLs[r][c], tid, rot);
+                    }
                 }
             }
         }
-
+        console.log($scope.board[0][0]);
         $scope.drawTile();
         var p;
         //draw path
@@ -673,8 +683,6 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
     $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
     $scope.tokenLs = [];
     $scope.pathLs = [[],[]];
-
-    updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
 
     gameService.setGame({
       gameDeveloperEmail: "angieyayabird@gmail.com",

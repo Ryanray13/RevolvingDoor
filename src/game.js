@@ -1,8 +1,8 @@
 angular.module('myApp')
-  .controller('Ctrl', ['$scope', '$log', '$timeout',
+  .controller('Ctrl', ['$rootScope', '$scope', '$log', '$timeout',
     'gameService', 'stateService', 'gameLogic', 'hexagon', 
     'resizeGameAreaService', 
-    function ($scope, $log, $timeout,
+    function ($rootScope, $scope, $log, $timeout,
       gameService, stateService, gameLogic, hexagon, 
       resizeGameAreaService) {
 
@@ -10,6 +10,7 @@ angular.module('myApp')
 
     resizeGameAreaService.setWidthToHeight(0.8);
 
+    $rootScope.isHelpModalShown = false;
     $scope.mouseClick = function(r, c, s){
         console.log("Clicked " + r + " " + c + " " + s);
         if(!$scope.isYourTurn){
@@ -118,21 +119,30 @@ angular.module('myApp')
 
         if($scope.board === undefined){
             var init = gameLogic.getInitialBoard();
+            $scope.isHelpModalShown = false;
             $scope.board = init.board;
             $scope.token = init.token;
+            $scope.tileLs = hexagon.genTileLs(init.board);
+            $scope.tokenLs = [];
+            $scope.pathLs = [[],[]];
+            $scope.tid = [0, 0];
+            $scope.tidIdx = 0;
+            $scope.rot = 0;
+            $scope.putToken = true;
+            $scope.currTile = null;
         }
         else{
             for(var r = 0; r < $scope.board.length; r++){
                 for(var c = 0; c < $scope.board[0].length; c++){
-              if($scope.board[r][c][0] !== -1){
-                  var tid = $scope.board[r][c][0];
-                  var rot = $scope.board[r][c][1];
-                  hexagon.drawPathTile($scope.tileLs[r][c], tid, rot);
-              }
+                    if($scope.board[r][c][0] !== -1){
+                        var tid = $scope.board[r][c][0];
+                        var rot = $scope.board[r][c][1];
+                        hexagon.drawPathTile($scope.tileLs[r][c], tid, rot);
+                    }
                 }
             }
         }
-
+        console.log($scope.board[0][0]);
         $scope.drawTile();
         var p;
         //draw path
@@ -199,8 +209,6 @@ angular.module('myApp')
     $scope.tileLs = hexagon.genTileLs(gameLogic.getInitialBoard().board);
     $scope.tokenLs = [];
     $scope.pathLs = [[],[]];
-
-    updateUI({stateAfterMove: {}, turnIndexAfterMove: 0, yourPlayerIndex: -2});
 
     gameService.setGame({
       gameDeveloperEmail: "angieyayabird@gmail.com",

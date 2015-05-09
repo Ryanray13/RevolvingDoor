@@ -92,7 +92,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
     }
 
     function copyObject(object) {
-        return JSON.parse(JSON.stringify(object));
+        return angular.copy(object);
     }
 
     // check if token's location is at the edge of board
@@ -203,18 +203,18 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', functi
     }
 
     function getInitialBoard(){
-        var board = new Array(boardSize);
+        var board = [];
         var i,j;
         for(i = 0; i < boardSize; i++){
-            board[i] = new Array(boardSize);
+            board[i] = [];
             for(j = 0; j < boardSize; j++){
                 board[i][j] = [-1,-1];
             }
         }
 
-        var token = new Array(playerNum);
+        var token = [];
         for(i = 0; i < playerNum; i++){
-            token[i] = new Array(3);
+            token[i] = [];
             for(j = 0; j < 3; j++){
                 token[i][j] = -1;
             }
